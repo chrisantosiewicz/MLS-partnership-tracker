@@ -1,0 +1,23 @@
+# Database is rebuilt from sql/ and data/ on every run
+*.duckdb
+*.duckdb.wal
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Quarto
+site/_site/
+site/.quarto/
+/.quarto/
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.Rproj.user/
+.Rhistory
