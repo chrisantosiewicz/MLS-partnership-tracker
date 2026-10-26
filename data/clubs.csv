@@ -1,31 +1,31 @@
-club_id,club_name,short_name,city,state_province,country,conference,wikipedia_article
-ATL,Atlanta United FC,Atlanta United,Atlanta,GA,USA,Eastern,Atlanta United FC
-AUS,Austin FC,Austin,Austin,TX,USA,Western,Austin FC
-CLT,Charlotte FC,Charlotte,Charlotte,NC,USA,Eastern,Charlotte FC
-CHI,Chicago Fire FC,Chicago Fire,Chicago,IL,USA,Eastern,Chicago Fire FC
-CIN,FC Cincinnati,Cincinnati,Cincinnati,OH,USA,Eastern,FC Cincinnati
-COL,Colorado Rapids,Colorado,Commerce City,CO,USA,Western,Colorado Rapids
-CLB,Columbus Crew,Columbus,Columbus,OH,USA,Eastern,Columbus Crew
-DAL,FC Dallas,Dallas,Frisco,TX,USA,Western,FC Dallas
-DC,D.C. United,D.C. United,Washington,DC,USA,Eastern,D.C. United
-HOU,Houston Dynamo FC,Houston,Houston,TX,USA,Western,Houston Dynamo FC
-MIA,Inter Miami CF,Inter Miami,Fort Lauderdale,FL,USA,Eastern,Inter Miami CF
-LA,LA Galaxy,LA Galaxy,Carson,CA,USA,Western,LA Galaxy
-LAFC,Los Angeles FC,LAFC,Los Angeles,CA,USA,Western,Los Angeles FC
-MIN,Minnesota United FC,Minnesota,Saint Paul,MN,USA,Western,Minnesota United FC
-MTL,CF Montréal,Montréal,Montreal,QC,Canada,Eastern,CF Montréal
-NSH,Nashville SC,Nashville,Nashville,TN,USA,Eastern,Nashville SC
-NE,New England Revolution,New England,Foxborough,MA,USA,Eastern,New England Revolution
-NYC,New York City FC,NYCFC,New York,NY,USA,Eastern,New York City FC
-RBNY,New York Red Bulls,Red Bulls,Harrison,NJ,USA,Eastern,New York Red Bulls
-ORL,Orlando City SC,Orlando City,Orlando,FL,USA,Eastern,Orlando City SC
-PHI,Philadelphia Union,Philadelphia,Chester,PA,USA,Eastern,Philadelphia Union
-POR,Portland Timbers,Portland,Portland,OR,USA,Western,Portland Timbers
-RSL,Real Salt Lake,Real Salt Lake,Sandy,UT,USA,Western,Real Salt Lake
-SD,San Diego FC,San Diego,San Diego,CA,USA,Western,San Diego FC
-SJ,San Jose Earthquakes,San Jose,San Jose,CA,USA,Western,San Jose Earthquakes
-SEA,Seattle Sounders FC,Seattle,Seattle,WA,USA,Western,Seattle Sounders FC
-SKC,Sporting Kansas City,Sporting KC,Kansas City,KS,USA,Western,Sporting Kansas City
-STL,St. Louis City SC,St. Louis City,St. Louis,MO,USA,Western,St. Louis City SC
-TOR,Toronto FC,Toronto,Toronto,ON,Canada,Eastern,Toronto FC
-VAN,Vancouver Whitecaps FC,Vancouver,Vancouver,BC,Canada,Western,Vancouver Whitecaps FC
+club_id,club_name,short_name,city,state_province,country,conference,wikipedia_article,asa_team_name
+ATL,Atlanta United FC,Atlanta United,Atlanta,GA,USA,Eastern,Atlanta United FC,Atlanta United FC
+AUS,Austin FC,Austin,Austin,TX,USA,Western,Austin FC,Austin FC
+CLT,Charlotte FC,Charlotte,Charlotte,NC,USA,Eastern,Charlotte FC,Charlotte FC
+CHI,Chicago Fire FC,Chicago Fire,Chicago,IL,USA,Eastern,Chicago Fire FC,Chicago Fire FC
+CIN,FC Cincinnati,Cincinnati,Cincinnati,OH,USA,Eastern,FC Cincinnati,FC Cincinnati
+COL,Colorado Rapids,Colorado,Commerce City,CO,USA,Western,Colorado Rapids,Colorado Rapids
+CLB,Columbus Crew,Columbus,Columbus,OH,USA,Eastern,Columbus Crew,Columbus Crew
+DAL,FC Dallas,Dallas,Frisco,TX,USA,Western,FC Dallas,FC Dallas
+DC,D.C. United,D.C. United,Washington,DC,USA,Eastern,D.C. United,D.C. United
+HOU,Houston Dynamo FC,Houston,Houston,TX,USA,Western,Houston Dynamo FC,Houston Dynamo FC
+MIA,Inter Miami CF,Inter Miami,Fort Lauderdale,FL,USA,Eastern,Inter Miami CF,Inter Miami CF
+LA,LA Galaxy,LA Galaxy,Carson,CA,USA,Western,LA Galaxy,LA Galaxy
+LAFC,Los Angeles FC,LAFC,Los Angeles,CA,USA,Western,Los Angeles FC,Los Angeles FC
+MIN,Minnesota United FC,Minnesota,Saint Paul,MN,USA,Western,Minnesota United FC,Minnesota United FC
+MTL,CF Montréal,Montréal,Montreal,QC,Canada,Eastern,CF Montréal,CF Montréal
+NSH,Nashville SC,Nashville,Nashville,TN,USA,Eastern,Nashville SC,Nashville SC
+NE,New England Revolution,New England,Foxborough,MA,USA,Eastern,New England Revolution,New England Revolution
+NYC,New York City FC,NYCFC,New York,NY,USA,Eastern,New York City FC,New York City FC
+RBNY,New York Red Bulls,Red Bulls,Harrison,NJ,USA,Eastern,New York Red Bulls,New York Red Bulls
+ORL,Orlando City SC,Orlando City,Orlando,FL,USA,Eastern,Orlando City SC,Orlando City SC
+PHI,Philadelphia Union,Philadelphia,Chester,PA,USA,Eastern,Philadelphia Union,Philadelphia Union
+POR,Portland Timbers,Portland,Portland,OR,USA,Western,Portland Timbers,Portland Timbers FC
+RSL,Real Salt Lake,Real Salt Lake,Sandy,UT,USA,Western,Real Salt Lake,Real Salt Lake
+SD,San Diego FC,San Diego,San Diego,CA,USA,Western,San Diego FC,San Diego FC
+SJ,San Jose Earthquakes,San Jose,San Jose,CA,USA,Western,San Jose Earthquakes,San Jose Earthquakes
+SEA,Seattle Sounders FC,Seattle,Seattle,WA,USA,Western,Seattle Sounders FC,Seattle Sounders FC
+SKC,Sporting Kansas City,Sporting KC,Kansas City,KS,USA,Western,Sporting Kansas City,Sporting Kansas City
+STL,St. Louis City SC,St. Louis City,St. Louis,MO,USA,Western,St. Louis City SC,St. Louis City SC
+TOR,Toronto FC,Toronto,Toronto,ON,Canada,Eastern,Toronto FC,Toronto FC
+VAN,Vancouver Whitecaps FC,Vancouver,Vancouver,BC,Canada,Western,Vancouver Whitecaps FC,Vancouver Whitecaps FC
