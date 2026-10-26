@@ -21,3 +21,7 @@ Thumbs.db
 .idea/
 .Rproj.user/
 .Rhistory
+site/_preview/
+
+# Half-written raw files (renamed into place when complete)
+*.tmp.parquet

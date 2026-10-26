@@ -1,31 +1,31 @@
 """Build the DuckDB database from scratch and run every data-quality test.
 
 Usage (from the repo root):
-    python python/run_tests.py
+    python python/build.py
 
 Steps:
   1. Delete and recreate tracker.duckdb, so every run starts clean (running
      twice gives the same result).
-  2. Run sql/schema.sql (creates tables), then sql/load.sql if it exists
-     (loads the CSVs).
+  2. Run sql/schema.sql (creates tables), sql/load.sql (loads data/), then
+     every sql/models/*.sql in file-name order (10_, 20_, ...).
   3. Run each tests/*.sql file. A test is a query that returns the rows that
      break a rule, so a passing test returns zero rows.
-  4. Exit with code 1 if any test returned rows or failed to run. GitHub
-     Actions treats a non-zero exit as a failed job.
+       test_*.sql  must return zero rows, or the build fails.
+       warn_*.sql  rows are printed as a warning but don't fail the build
+                   (for known gaps we track but shouldn't block the site).
+  4. Exit with code 1 if any test_ file returned rows or any file failed to
+     run. GitHub Actions treats a non-zero exit as a failed job.
 """
 
 import sys
-from pathlib import Path
-
 import duckdb
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+import config
+
+REPO_ROOT = config.REPO_ROOT
 DB_PATH = REPO_ROOT / "tracker.duckdb"
 SQL_DIR = REPO_ROOT / "sql"
 TESTS_DIR = REPO_ROOT / "tests"
-
-# Run in this order. load.sql is optional until you write it.
-BUILD_FILES = ["schema.sql", "load.sql"]
 
 
 def build_database() -> duckdb.DuckDBPyConnection:
@@ -38,15 +38,14 @@ def build_database() -> duckdb.DuckDBPyConnection:
     con = duckdb.connect(str(DB_PATH))
     con.execute(f"SET file_search_path = '{REPO_ROOT.as_posix()}'")
 
-    schema = SQL_DIR / "schema.sql"
-    if not schema.exists():
-        sys.exit("sql/schema.sql not found. Write it first, then rerun.")
+    # Empty raw files let the build run before the first ingestion.
+    config.ensure_raw_files()
 
-    for name in BUILD_FILES:
-        path = SQL_DIR / name
-        if path.exists():
-            print(f"build  {name}")
-            con.execute(path.read_text())
+    build_files = [SQL_DIR / "schema.sql", SQL_DIR / "load.sql"]
+    build_files += sorted((SQL_DIR / "models").glob("*.sql"))
+    for path in build_files:
+        print(f"build  {path.relative_to(REPO_ROOT)}")
+        con.execute(path.read_text())
     return con
 
 
@@ -66,8 +65,12 @@ def run_tests(con: duckdb.DuckDBPyConnection) -> bool:
             all_passed = False
             continue
 
+        is_warning = path.name.startswith("warn_")
         if bad_rows.empty:
             print(f"PASS   {path.name}")
+        elif is_warning:
+            print(f"WARN   {path.name}: {len(bad_rows)} row(s)")
+            print(bad_rows.head(10).to_string(index=False))
         else:
             print(f"FAIL   {path.name}: {len(bad_rows)} row(s)")
             print(bad_rows.head(10).to_string(index=False))
