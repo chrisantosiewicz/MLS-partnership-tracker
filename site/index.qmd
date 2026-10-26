@@ -1,0 +1,81 @@
+---
+title: "Who sponsors MLS, and who's paying attention?"
+subtitle: "A sourced dataset of MLS club sponsorships, with daily public-attention tracking"
+---
+
+```{python}
+#| include: false
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd()))
+import charts
+
+FEATURED_CLUB = "STL"  # club for the attention chart
+
+status = charts.query("""
+    SELECT
+        (SELECT COUNT(*) FROM partnership_history WHERE is_current) AS current_deals,
+        (SELECT COUNT(DISTINCT club_id) FROM partnership_history WHERE is_current) AS clubs_covered,
+        (SELECT MAX(view_date) FROM fact_pageviews_daily) AS pageviews_through,
+        (SELECT MAX(date_checked) FROM stg_partnerships) AS last_checked
+""").iloc[0]
+
+
+def show_date(value) -> str:
+    return "n/a" if value is None or str(value) == "NaT" else f"{value:%b %d, %Y}"
+```
+
+This page rebuilds itself every day. It tracks the front-of-kit, sleeve and
+stadium naming partners of all 30 MLS clubs, and how much public attention
+(Wikipedia pageviews) each club and sponsor brand gets.
+
+**Data status:** `{python} int(status.current_deals)` current deals across
+`{python} int(status.clubs_covered)` clubs · pageviews through
+`{python} show_date(status.pageviews_through)` · dataset last checked
+`{python} show_date(status.last_checked)`.
+
+## Which categories buy MLS's biggest assets?
+
+```{python}
+fig = charts.category_landscape()
+if fig is None:
+    print("The dataset has no current deals yet.")
+else:
+    fig.show()
+```
+
+## What a match day does for a club's attention
+
+```{python}
+fig = charts.club_attention(FEATURED_CLUB)
+if fig is None:
+    print("No pageview data loaded yet.")
+else:
+    fig.show()
+```
+
+## Methods and limitations
+
+- **Attention, not value.** Wikipedia pageviews are a proxy for public
+  attention. They are not a measure of sponsorship value, reach or return.
+- **Baseline.** A day's lift compares its views with the average of the 28
+  days before it (the day itself is excluded). Days the API reports no views
+  count as zero.
+- **Match day** is the UTC date of kickoff, the same clock Wikimedia uses. A
+  late kickoff on the US West Coast falls on the next UTC day.
+- **Deal dates** are recorded by season. A deal runs from 1 January of its
+  first season to 31 December of its last, unless an exact date is known.
+- **Reported values** are shown only when a published source reports them,
+  and are labelled "reported".
+- **Coverage.** The dataset is maintained by hand and may miss recent changes.
+  Each row links to its source and the date it was checked.
+
+## Sources
+
+- Sponsorship data: compiled by Chris Antosiewicz from club and brand
+  announcements and press coverage. Each row's source is in the
+  [dataset](https://github.com/chrisantosiewicz/MLS-partnership-tracker/blob/main/data/partnerships.csv).
+  Licensed CC BY 4.0.
+- Pageviews: [Wikimedia Analytics API](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/) (CC0).
+- Match schedules and results: [American Soccer Analysis](https://www.americansocceranalysis.com/).

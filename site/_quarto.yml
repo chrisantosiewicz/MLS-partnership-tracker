@@ -1,0 +1,23 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "MLS Partnership Tracker"
+  navbar:
+    right:
+      - text: "Code"
+        href: https://github.com/chrisantosiewicz/MLS-partnership-tracker
+      - text: "Dataset (CSV)"
+        href: https://github.com/chrisantosiewicz/MLS-partnership-tracker/blob/main/data/partnerships.csv
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true
+    code-summary: "Show the code"
+
+execute:
+  echo: false
+  warning: false
