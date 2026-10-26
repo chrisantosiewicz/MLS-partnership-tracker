@@ -1,5 +1,7 @@
 # Week 1 plan: Oct 26 to Nov 1, 2026
 
+> **Superseded on Oct 26:** Chris asked Claude to build the foundation now and teach it afterward. See `PROGRESS_LOG.md` for the current to-do list and `docs/WALKTHROUGH.md` for the teaching plan. The design questions below are now answered in `data/README.md` and `docs/WALKTHROUGH.md` section 1.
+
 **Goal for the week:** `data/partnerships.csv` (v0, about 90 sourced rows) loads into DuckDB through your `sql/schema.sql`, and your data-quality tests return zero rows.
 
 **Budget:** 9 hours (range 8 to 10). $0 spend.

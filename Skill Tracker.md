@@ -17,4 +17,4 @@ Baseline ratings below are **provisional**, taken from Chris's project brief. Ch
 ## Weekly history
 | Week | Changes |
 |------|---------|
-| 1 (Oct 26 to Nov 1) | Tracker created with provisional baselines. |
+| 1 (Oct 26 to Nov 1) | Tracker created with provisional baselines. Claude built the foundation at Chris's request; ratings move only after the walkthrough (`docs/WALKTHROUGH.md`) shows Chris can explain each piece. |

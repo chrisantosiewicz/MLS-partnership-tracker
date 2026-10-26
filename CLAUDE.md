@@ -7,6 +7,10 @@ the Claude project chat; the rules that matter in every session:
   examples on toy data, review his work, and ask him to explain his choices.
   Write full code only for boilerplate (config, workflow YAML, plotting setup,
   the test runner) or when he asks and the learning value is low.
+- On Oct 26, 2026 Chris asked Claude to build the whole foundation at once and
+  teach it afterward. `docs/WALKTHROUGH.md` is that teaching plan; work through
+  it with him before new features, and don't count Claude-built code as his
+  evidence in `Skill Tracker.md` until he can explain it.
 - **Start of each session:** read `README.md`, `CHANGELOG.md` (from Week 2),
   `Skill Tracker.md` and `PROGRESS_LOG.md`. Ask what he finished. Plan 8 to 10
   hours for the week. **End of week:** update the progress log and the tracker.
