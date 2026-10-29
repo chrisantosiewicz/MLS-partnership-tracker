@@ -1,0 +1,7 @@
+duckdb>=1.1
+pandas>=2.2
+requests>=2.32
+itscalledsoccer>=2.3
+plotly>=6.0
+jupyter
+pytest

@@ -1,0 +1,4 @@
+asset_id,asset_name,exclusive_per_club,description
+front_of_kit,Front-of-kit partner,true,Brand on the front of the primary match shirt
+sleeve,Sleeve partner,true,Brand patch on the sleeve of the primary match shirt
+stadium_naming,Stadium naming rights,true,Brand in the name of the club's primary home stadium
