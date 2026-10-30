@@ -36,3 +36,29 @@ def test_to_rows_fails_loudly_on_missing_field():
     del bad["status"]
     with pytest.raises(KeyError, match="status"):
         asa.to_rows([bad], TEAMS)
+
+
+def test_first_run_fetches_every_season():
+    assert asa.seasons_to_fetch(2026, set()) == [2023, 2024, 2025, 2026]
+
+
+def test_later_runs_fetch_only_current_season():
+    assert asa.seasons_to_fetch(2026, {2023, 2024, 2025, 2026}) == [2026]
+
+
+def test_new_year_fetches_new_season():
+    assert asa.seasons_to_fetch(2027, {2023, 2024, 2025, 2026}) == [2027]
+
+
+def test_keep_other_seasons_replaces_only_fetched(tmp_path, monkeypatch):
+    import config
+    monkeypatch.setattr(config, "RAW_DIR", tmp_path)
+    monkeypatch.setattr(config, "MATCHES_FILE", tmp_path / "matches.parquet")
+    old = asa.to_rows([game(game_id="old25", season_name="2025"),
+                       game(game_id="old26", season_name="2026", status="PreMatch")], TEAMS)
+    asa.save(old)
+    new = asa.to_rows([game(game_id="old26", season_name="2026", status="FullTime")], TEAMS)
+    merged = asa.keep_other_seasons(new, [2026])
+    assert sorted(merged["game_id"]) == ["old25", "old26"]
+    assert merged.loc[merged["game_id"] == "old26", "status"].item() == "FullTime"
+    asa.save(merged)  # merged frame must still match the file's column types
