@@ -1,9 +1,10 @@
-"""Plot setup for the site: data access and the two Plotly charts.
+"""Plot setup for the site: data access, the Plotly charts and the sponsor table.
 
 Kept out of index.qmd so the page stays readable and the charts can be
-tested on their own (python site/charts.py writes both to site/_preview/).
+tested on their own (python site/charts.py writes them to site/_preview/).
 """
 
+from html import escape
 from pathlib import Path
 
 import duckdb
@@ -120,10 +121,161 @@ def club_attention(club_id: str, days: int = 365) -> go.Figure | None:
     return _base_layout(fig, title, f"Last {days} days. Median match day vs the prior 28-day average")
 
 
+RESULT_LABELS = {"win": "Win", "draw": "Draw", "loss": "Loss"}
+
+
+def sponsor_directory() -> str | None:
+    """HTML table: one row per club with its current kit partners and source."""
+    df = query("""
+        SELECT short_name, conference,
+               front_of_kit_brand, front_of_kit_category,
+               sleeve_brand, sleeve_category,
+               source_url, date_checked
+        FROM mart_sponsor_directory
+        ORDER BY conference, short_name
+    """)
+    if df.empty:
+        return None
+
+    def cell(brand, category) -> str:
+        if brand is None or pd.isna(brand):
+            return f"<td style='color:{MUTED}'>Not recorded</td>"
+        return (f"<td>{escape(brand)}<br>"
+                f"<small style='color:{TEXT_2}'>{escape(category or '')}</small></td>")
+
+    rows = []
+    for r in df.itertuples():
+        source = (f"<a href='{escape(r.source_url)}'>source</a>, "
+                  f"checked {r.date_checked:%b %d, %Y}" if pd.notna(r.source_url) else "")
+        rows.append(f"<tr><td><strong>{escape(r.short_name)}</strong><br>"
+                    f"<small style='color:{TEXT_2}'>{escape(r.conference)}</small></td>"
+                    f"{cell(r.front_of_kit_brand, r.front_of_kit_category)}"
+                    f"{cell(r.sleeve_brand, r.sleeve_category)}"
+                    f"<td><small>{source}</small></td></tr>")
+    return ("<table class='table table-sm'><thead><tr><th>Club</th><th>Front of kit</th>"
+            "<th>Sleeve</th><th>Source</th></tr></thead><tbody>"
+            + "".join(rows) + "</tbody></table>")
+
+
+def club_match_lift(season: int | None = None) -> go.Figure | None:
+    """Dot plot: each club's median match-day lift, home and away, for one season."""
+    df = query("""
+        SELECT l.season, c.short_name, l.matches,
+               l.median_lift, l.median_lift_home, l.median_lift_away
+        FROM mart_club_match_lift AS l
+        JOIN dim_club AS c USING (club_id)
+        WHERE l.season = COALESCE(?, (SELECT MAX(season) FROM mart_club_match_lift))
+        ORDER BY l.median_lift
+    """, [season])
+    if df.empty:
+        return None
+    season = int(df["season"].iloc[0])
+
+    fig = go.Figure()
+    # Thin line from away to home dot, so the gap between them reads at a glance.
+    for r in df.itertuples():
+        fig.add_scatter(x=[r.median_lift_away, r.median_lift_home], y=[r.short_name] * 2,
+                        mode="lines", line={"color": GRID, "width": 3},
+                        hoverinfo="skip", showlegend=False)
+    for col, name, color in [("median_lift_away", "Away", SERIES[0]),
+                             ("median_lift_home", "Home", SERIES[1])]:
+        fig.add_scatter(x=df[col], y=df["short_name"], name=name, mode="markers",
+                        marker={"color": color, "size": 9, "line": {"color": SURFACE, "width": 1}},
+                        hovertemplate="%{y} " + name.lower() + ": %{x:+.0%}<extra></extra>")
+    fig.add_scatter(x=df["median_lift"], y=df["short_name"], name="All matches", mode="markers",
+                    marker={"color": TEXT, "size": 7, "symbol": "line-ns",
+                            "line": {"color": TEXT, "width": 2}},
+                    customdata=df["matches"],
+                    hovertemplate="%{y}: %{x:+.0%} across %{customdata} matches<extra></extra>")
+    fig.update_layout(height=28 * len(df) + 160, hovermode="closest")
+    fig.update_xaxes(tickformat="+.0%", zeroline=True, zerolinecolor=MUTED)
+
+    top = df.iloc[-1]
+    fig = _base_layout(
+        fig,
+        f"{top.short_name}'s Wikipedia page gets the biggest match-day bump in {season} "
+        f"({top.median_lift:+.0%})",
+        "Median match day vs the prior 28-day average, completed matches only",
+    )
+    fig.update_layout(legend={"y": -0.06})  # tall chart: keep the legend close to the axis
+    return fig
+
+
+def lift_by_result() -> go.Figure | None:
+    """Grouped bars: median match-day lift after a win, draw or loss, home vs away."""
+    df = query("SELECT result, venue, matches, median_lift FROM mart_lift_by_result")
+    if df.empty:
+        return None
+    order = ["win", "draw", "loss"]
+
+    fig = go.Figure()
+    for venue, color in [("home", SERIES[1]), ("away", SERIES[0])]:
+        part = df[df["venue"] == venue].set_index("result").reindex(order)
+        fig.add_bar(
+            x=[RESULT_LABELS[r] for r in order], y=part["median_lift"], name=venue.title(),
+            marker={"color": color, "line": {"color": SURFACE, "width": 2}},
+            text=[f"{v:+.0%}" for v in part["median_lift"]], textposition="outside",
+            customdata=part["matches"],
+            hovertemplate=venue.title() + " %{x}: %{y:+.0%} (%{customdata:,} matches)<extra></extra>",
+        )
+    fig.update_layout(barmode="group", height=400)
+    fig.update_yaxes(tickformat="+.0%", rangemode="tozero")
+
+    home = df[df["venue"] == "home"].set_index("result")["median_lift"]
+    seasons = query("SELECT MIN(season), MAX(season) FROM mart_match_day_lift").iloc[0]
+    title = (f"A home win draws more attention ({home['win']:+.0%}) than a home loss "
+             f"({home['loss']:+.0%})" if home["win"] > home["loss"]
+             else "Match-day attention by result")
+    return _base_layout(fig, title,
+                        f"Median match-day lift by the club's result, all clubs, "
+                        f"{seasons.iloc[0]} to {seasons.iloc[1]}")
+
+
+def attention_by_season() -> go.Figure | None:
+    """Ranked bars: each club's change in average daily views, this season vs last."""
+    df = query("""
+        SELECT s.season, c.short_name, s.avg_daily_views, s.prev_avg_daily_views,
+               s.change_vs_prev
+        FROM mart_attention_by_season AS s
+        JOIN dim_club AS c USING (club_id)
+        WHERE s.season = (SELECT MAX(season) FROM mart_attention_by_season)
+          AND s.change_vs_prev IS NOT NULL
+        ORDER BY s.change_vs_prev
+    """)
+    if df.empty:
+        return None
+    season = int(df["season"].iloc[0])
+    through = query("SELECT MAX(view_date) FROM mart_attention_daily").iloc[0, 0]
+
+    fig = go.Figure()
+    fig.add_bar(
+        y=df["short_name"], x=df["change_vs_prev"], orientation="h",
+        marker={"color": [SERIES[0] if v >= 0 else SERIES[1] for v in df["change_vs_prev"]]},
+        customdata=df[["avg_daily_views", "prev_avg_daily_views"]],
+        hovertemplate=(f"%{{y}}: %{{x:+.0%}}<br>{season}: %{{customdata[0]:,.0f}} a day<br>"
+                       f"{season - 1}: %{{customdata[1]:,.0f}} a day<extra></extra>"),
+        showlegend=False,
+    )
+    fig.update_layout(height=24 * len(df) + 160)
+    fig.update_xaxes(tickformat="+.0%", zeroline=True, zerolinecolor=MUTED)
+
+    up = int((df["change_vs_prev"] > 0).sum())
+    top = df.iloc[-1]
+    return _base_layout(
+        fig,
+        f"{up} of {len(df)} clubs get more Wikipedia views than last year; "
+        f"{top.short_name} is up most ({top.change_vs_prev:+.0%})",
+        f"Average daily pageviews, Jan 1 to {through:%b %d}, {season} vs {season - 1}",
+    )
+
+
 if __name__ == "__main__":
     out = Path(__file__).resolve().parent / "_preview"
     out.mkdir(exist_ok=True)
-    for name, fig in [("landscape", category_landscape()), ("attention", club_attention("STL"))]:
+    figs = [("landscape", category_landscape()), ("attention", club_attention("STL")),
+            ("match_lift", club_match_lift()), ("result", lift_by_result()),
+            ("season", attention_by_season())]
+    for name, fig in figs:
         if fig is not None:
             fig.write_html(out / f"{name}.html", include_plotlyjs=True)
             print(f"wrote {out / name}.html")
