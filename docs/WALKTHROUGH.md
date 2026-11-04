@@ -7,7 +7,7 @@ be able to explain every line before any of it goes on a resume.**
 
 Work through it in this order. Each section names the skill it practices, the
 files, the ideas to understand, and questions to answer out loud or in
-writing. Answers go in `PROGRESS_LOG.md`.
+writing. Answers go in `PROGRESS_LOG.md` (this folder).
 
 ---
 
