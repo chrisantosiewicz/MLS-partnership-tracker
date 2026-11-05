@@ -29,7 +29,7 @@ any data test fails, nothing is published and the previous page stays up.
 | `tests/` | Data tests: queries that must return zero rows. `tests/python/` has unit tests |
 | `python/` | Ingestion scripts and the build runner |
 | `site/` | Quarto page and chart code |
-| `docs/` | [Walkthrough](docs/WALKTHROUGH.md) and weekly plans |
+| `docs/` | Project tracking: progress log, skill tracker, decisions, [walkthrough](docs/WALKTHROUGH.md) |
 
 ## Run it locally
 
@@ -63,5 +63,10 @@ Code: [MIT](LICENSE). Dataset files in `data/`: [CC BY 4.0](data/LICENSE.md).
 ## Project tracking
 
 - [`CHANGELOG.md`](CHANGELOG.md): dataset and pipeline changes
-- [`PROGRESS_LOG.md`](PROGRESS_LOG.md): weekly plan, what got done, decisions
-- [`Skill Tracker.md`](Skill%20Tracker.md): skills practiced, with evidence
+- [`docs/PROGRESS_LOG.md`](docs/PROGRESS_LOG.md): weekly plan and what got done
+- [`docs/SKILL_TRACKER.md`](docs/SKILL_TRACKER.md): skills practiced, with evidence
+- [`docs/DECISIONS.md`](docs/DECISIONS.md): standing design decisions
+- [`data/TO_VERIFY.md`](data/TO_VERIFY.md): sponsorship rows waiting on sources
+
+Each folder has a short `CONTEXT.md` saying what it's for and how to work in
+it; [`CLAUDE.md`](CLAUDE.md) routes between them.
