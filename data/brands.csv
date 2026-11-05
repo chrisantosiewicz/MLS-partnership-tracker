@@ -1,8 +1,11 @@
 brand_id,brand_name,parent_company,category_id,wikipedia_article,no_article_reason,notes
 adrianas_insurance,Adriana's Insurance,,insurance,,No English Wikipedia article found,
+allianz,Allianz,,insurance,Allianz,,
 ally,Ally,Ally Financial,banking_financial,Ally Financial,,
+america_first_cu,America First Credit Union,,banking_financial,America First Credit Union,,
 american_family_insurance,American Family Insurance,,insurance,American Family Insurance,,
 apollo,Apollo,Apollo.io,technology,,Article title not yet confirmed,AI go-to-market (B2B sales) software
+audi,Audi,Volkswagen Group,automotive,Audi,,
 bank_of_america,Bank of America,,banking_financial,Bank of America,,
 bimbo_bakeries,Bimbo Bakeries USA,Grupo Bimbo,food_restaurant,Bimbo Bakeries USA,,
 bjc_healthcare,BJC HealthCare,,health_care,BJC HealthCare,,
@@ -13,46 +16,63 @@ carvana,Carvana,,automotive,Carvana,,
 childrens_health_dallas,Children's Health,,health_care,,Article title not yet confirmed,Dallas pediatric health system
 compass_minerals,Compass Minerals,,logistics_industrial,Compass Minerals,,
 dhl_supply_chain,DHL Supply Chain,DHL Group,logistics_industrial,DHL Supply Chain,,
+dicks_sporting_goods,Dick's Sporting Goods,,retail,Dick's Sporting Goods,,
+dignity_health,Dignity Health,CommonSpirit Health,health_care,Dignity Health,,
 directv,DIRECTV,,media_entertainment,DirecTV,,
 el_camino_health,El Camino Health,,health_care,,Article title not yet confirmed,
 emerald_queen_casino,Emerald Queen Casino & Hotel,Puyallup Tribe of Indians,betting_gaming,,Article title not yet confirmed,
 emory_healthcare,Emory Healthcare,Emory University,health_care,Emory Healthcare,,
+energizer,Energizer,Energizer Holdings,consumer_goods,,Article title not yet confirmed,
 etihad,Etihad Airways,,travel_hospitality,Etihad Airways,,
 finleys,Finley's,,retail,,No English Wikipedia article found,Barbershop chain
 ford,Ford,Ford Motor Company,automotive,Ford Motor Company,,
+geodis,GEODIS,,logistics_industrial,Geodis,,
 gillette,Gillette,Procter & Gamble,consumer_goods,Gillette,,
 guidehouse,Guidehouse,,professional_services,Guidehouse,,
 herbalife,Herbalife,,consumer_goods,Herbalife,,
 hyundai,Hyundai,Hyundai Motor Company,automotive,Hyundai Motor Company,,
 independence_blue_cross,Independence Blue Cross,,insurance,Independence Blue Cross,,
+inter_co,Inter&Co,,banking_financial,,Article title not yet confirmed,Digital bank (Banco Inter)
 intermountain_health,Intermountain Health,,health_care,Intermountain Health,,Utah health system. Wikipedia title to confirm (article may still be titled Intermountain Healthcare)
 kiewit,Kiewit,,real_estate_construction,Kiewit Corporation,,
 kroger,Kroger,,retail,Kroger,,
 lg,LG,LG Electronics,technology,LG Electronics,,
 lowes,Lowe's,,retail,Lowe's,,
+lumen,Lumen,Lumen Technologies,telecom,Lumen Technologies,,
 magellan,Magellan Corporation,,other,,Company not yet identified,Category to confirm: name matches more than one company
 md_anderson,MD Anderson Cancer Center,University of Texas,health_care,MD Anderson Cancer Center,,
+mercedes_benz,Mercedes-Benz,Mercedes-Benz Group,automotive,Mercedes-Benz,,
 mercy_health,Mercy Health,Bon Secours Mercy Health,health_care,,Article title not yet confirmed,Cincinnati region health system
 nationwide,Nationwide,Nationwide Mutual Insurance Company,insurance,Nationwide Mutual Insurance Company,,
+nu,Nu,Nu Holdings,banking_financial,Nubank,,Digital bank (Nubank)
 nutrisource,NutriSource,,consumer_goods,,No English Wikipedia article found,Pet food brand
 oanda,OANDA,,banking_financial,OANDA,,Currency trading broker
 orlando_health,Orlando Health,,health_care,Orlando Health,,
+paypal,PayPal,PayPal Holdings,crypto_fintech,PayPal,,Digital payments
 providence,Providence,,health_care,,Article title not yet confirmed,Health system
 purina,Purina,Nestlé,consumer_goods,Nestlé Purina PetCare,,
 puyallup_tribe,Puyallup Tribe of Indians,,education_government,Puyallup people,,Article title to confirm
+q2,Q2,Q2 Holdings,technology,,Article title not yet confirmed,Digital banking software
 rbc,RBC,Royal Bank of Canada,banking_financial,Royal Bank of Canada,,
 red_bull,Red Bull,Red Bull GmbH,beverage_nonalcoholic,Red Bull,,Also the club's owner
 renasant_bank,Renasant Bank,Renasant Corporation,banking_financial,,Article title not yet confirmed,
 royal_caribbean,Royal Caribbean,Royal Caribbean Group,travel_hospitality,Royal Caribbean International,,
 rugs_com,Rugs.com,,retail,,No English Wikipedia article found,
 saint_lukes,Saint Luke's Health System,,health_care,Saint Luke's Health System,,
+scotts_miracle_gro,ScottsMiracle-Gro,The Scotts Miracle-Gro Company,consumer_goods,,Article title not yet confirmed,Lawn and garden products
 select_health,Select Health,Intermountain Health,insurance,,Article title not yet confirmed,Intermountain Health's health plan (insurer)
+shell_energy,Shell Energy,Shell plc,energy_utilities,,Article title not yet confirmed,Shell's retail power business
 siete_foods,Siete Foods,,food_restaurant,,Article title not yet confirmed,
+snapdragon,Snapdragon,Qualcomm,technology,Qualcomm Snapdragon,,Qualcomm's chip brand
+sports_illustrated,Sports Illustrated,,media_entertainment,Sports Illustrated,,Deal is with Sports Illustrated Tickets
+subaru,Subaru,Subaru Corporation,automotive,Subaru,,
 target,Target,Target Corporation,retail,Target Corporation,,
 telus,TELUS,,telecom,Telus,,
 the_fruitist,The Fruitist,,food_restaurant,,No English Wikipedia article found,
 thomas,Thomas',Bimbo Bakeries USA,food_restaurant,,Article title not yet confirmed,Bimbo Bakeries USA brand
 tillamook,Tillamook,Tillamook County Creamery Association,food_restaurant,Tillamook County Creamery Association,,
+toyota,Toyota,Toyota Motor Corporation,automotive,Toyota,,
+tql,TQL,Total Quality Logistics,logistics_industrial,Total Quality Logistics,,
 uchealth,UCHealth,,health_care,UCHealth,,
 ut_southwestern,UT Southwestern Medical Center,University of Texas,health_care,University of Texas Southwestern Medical Center,,
 yeti,YETI,YETI Holdings,consumer_goods,,Article title not yet confirmed,

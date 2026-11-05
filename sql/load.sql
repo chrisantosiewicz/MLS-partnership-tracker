@@ -43,7 +43,8 @@ SELECT TRIM(club_id),
        NULLIF(TRIM(source_type), ''),
        NULLIF(TRIM(source_url), ''),
        CAST(NULLIF(TRIM(date_checked), '') AS DATE),
-       NULLIF(TRIM(notes), '')
+       NULLIF(TRIM(notes), ''),
+       NULLIF(TRIM(sold_by), '')
 FROM read_csv('data/partnerships.csv', header = true, all_varchar = true);
 
 -- Raw files written by the Python ingestion scripts.
