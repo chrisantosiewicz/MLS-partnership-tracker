@@ -6,8 +6,9 @@ brand. It powers the sponsorship page of Chris Antosiewicz's portfolio site.
 
 > **Status:** foundations in progress. Dataset v0 covers 2026 front-of-kit
 > partners for all 30 clubs, and sleeve partners for the 26 clubs that sell
-> one (the other 4 carry only the league-wide Apple TV patch). Stadium naming
-> rights are next.
+> one (the other 4 carry only the league-wide Apple TV patch), and stadium
+> naming rights for 25 clubs (3 play in unsponsored stadiums; 2 are being
+> checked).
 
 ## How it works
 
