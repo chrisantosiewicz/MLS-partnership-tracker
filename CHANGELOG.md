@@ -12,7 +12,10 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
   Intermountain's health plan, which is why the roundups disagreed. New brands
   `intermountain_health` (health_care) and `select_health` (insurance).
 - FC Dallas has no club sleeve partner in 2026: its 2026 kit release names only
-  the league-wide Apple TV patch, which the dataset doesn't record.
+  the league-wide Apple TV patch, which the dataset doesn't record. Houston,
+  New England and Orlando are the same (checked by Chris, Nov 5).
+- San Jose sleeve: Apollo (right sleeve) from July 25, 2026, per the club's
+  announcement. New brand `apollo` (technology).
 - First 57 rows of `partnerships.csv`: front-of-kit partners for 29 clubs and
   sleeve partners for 24 clubs, 2026 season. Sourced from two independent 2026
   roundups (Blinkfire Analytics, forsoccer.com) that agree, plus the FC Dallas

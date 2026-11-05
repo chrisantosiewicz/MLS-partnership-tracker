@@ -2,6 +2,7 @@ brand_id,brand_name,parent_company,category_id,wikipedia_article,no_article_reas
 adrianas_insurance,Adriana's Insurance,,insurance,,No English Wikipedia article found,
 ally,Ally,Ally Financial,banking_financial,Ally Financial,,
 american_family_insurance,American Family Insurance,,insurance,American Family Insurance,,
+apollo,Apollo,Apollo.io,technology,,Article title not yet confirmed,AI go-to-market (B2B sales) software
 bank_of_america,Bank of America,,banking_financial,Bank of America,,
 bimbo_bakeries,Bimbo Bakeries USA,Grupo Bimbo,food_restaurant,Bimbo Bakeries USA,,
 bjc_healthcare,BJC HealthCare,,health_care,BJC HealthCare,,
@@ -29,7 +30,7 @@ kiewit,Kiewit,,real_estate_construction,Kiewit Corporation,,
 kroger,Kroger,,retail,Kroger,,
 lg,LG,LG Electronics,technology,LG Electronics,,
 lowes,Lowe's,,retail,Lowe's,,
-magellan,Magellan Corporation,,other,,Company not yet identified,"Category to confirm: name matches more than one company"
+magellan,Magellan Corporation,,other,,Company not yet identified,Category to confirm: name matches more than one company
 md_anderson,MD Anderson Cancer Center,University of Texas,health_care,MD Anderson Cancer Center,,
 mercy_health,Mercy Health,Bon Secours Mercy Health,health_care,,Article title not yet confirmed,Cincinnati region health system
 nationwide,Nationwide,Nationwide Mutual Insurance Company,insurance,Nationwide Mutual Insurance Company,,
