@@ -6,6 +6,13 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 ## Unreleased (v0.1 candidate)
 
 ### Dataset
+- Real Salt Lake added (Nov 5): Select Health on the front of the kit and
+  Intermountain Health on the sleeve, from the 2024 Intermountain and RSL
+  announcements (`start_season_basis = announced`, 2024). Select Health is
+  Intermountain's health plan, which is why the roundups disagreed. New brands
+  `intermountain_health` (health_care) and `select_health` (insurance).
+- FC Dallas has no club sleeve partner in 2026: its 2026 kit release names only
+  the league-wide Apple TV patch, which the dataset doesn't record.
 - First 57 rows of `partnerships.csv`: front-of-kit partners for 29 clubs and
   sleeve partners for 24 clubs, 2026 season. Sourced from two independent 2026
   roundups (Blinkfire Analytics, forsoccer.com) that agree, plus the FC Dallas
