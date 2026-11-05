@@ -7,8 +7,10 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 
 ### Dataset
 - Stadium naming rights for 25 clubs (Nov 5). Each row cites a club, brand or
-  press announcement. Chicago, NYCFC and Vancouver have unsponsored stadium
-  names; Sporting KC and CF Montréal are in `TO_VERIFY.md`. 20 new brands.
+  press announcement. No row for Chicago, NYCFC and Vancouver (unsponsored
+  names), Sporting KC (Children's Mercy deal ended after 2025; the club is
+  seeking a new partner) or CF Montréal (Stade Saputo is named for the owner's
+  company, not a paid deal). 20 new brands.
 - New column `sold_by` in `partnerships.csv`: `club`, or `stadium_owner` for
   external venues (Atlanta, Charlotte, New England and Seattle's NFL
   stadiums, and San Diego State's Snapdragon Stadium). Added to the
