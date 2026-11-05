@@ -30,6 +30,9 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 - Added category `professional_services` (Guidehouse, BLG).
 
 ### Pipeline
+- GitHub Actions moved to their Node 24 versions (checkout v5, setup-python
+  v6, upload-pages-artifact v5, deploy-pages v5) ahead of the Node 20
+  deprecation (Nov 5).
 - Schema, loads, `partnership_history` (type 2), attention baseline,
   match-day lift, category landscape, 13 data tests and 1 warning test.
 - Wikipedia pageviews ingestion (backfill from 2023-01-01, then incremental).
