@@ -5,7 +5,7 @@ goes here (sourcing rule 2 in `README.md`). Remove an item once it's settled
 and the CSV change is in `../CHANGELOG.md`.
 
 ## Missing rows
-- Stadium naming rights, two clubs left (checked 2026-11-05; 26 recorded,
+- Stadium naming rights, two clubs left (checked 2026-11-05; 25 recorded,
   and Chicago, NYCFC and Vancouver play in unsponsored stadiums):
   - Sporting KC: Children's Mercy Park's naming deal ended after 2025
     (https://www.kctv5.com/2025/12/12/sporting-kc-ends-partnership-with-childrens-mercy-begins-new-deal-with-saint-lukes/).
