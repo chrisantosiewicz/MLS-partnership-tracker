@@ -26,14 +26,33 @@ def show_date(value) -> str:
     return "n/a" if value is None or str(value) == "NaT" else f"{value:%b %d, %Y}"
 ```
 
-This page rebuilds itself every day. It tracks the front-of-kit, sleeve and
-stadium naming partners of all 30 MLS clubs, and how much public attention
-(Wikipedia pageviews) each club and sponsor brand gets.
+This page rebuilds itself every day. It tracks the front-of-kit and sleeve
+partners of all 30 MLS clubs, and how much public attention (Wikipedia
+pageviews) each club and sponsor brand gets. Stadium naming rights are next.
 
 **Data status:** `{python} int(status.current_deals)` current deals across
 `{python} int(status.clubs_covered)` clubs · pageviews through
 `{python} show_date(status.pageviews_through)` · dataset last checked
 `{python} show_date(status.last_checked)`.
+
+## Who sponsors each club?
+
+```{python}
+#| output: asis
+directory = charts.query("SELECT * FROM mart_sponsor_directory")
+missing_article = charts.query(
+    "SELECT COUNT(*) FROM dim_brand WHERE wikipedia_article IS NULL").iloc[0, 0]
+n_clubs = len(directory)
+n_front = int(directory["front_of_kit_brand"].notna().sum())
+n_sleeve = int(directory["sleeve_brand"].notna().sum())
+
+print(f"**Coverage:** front-of-kit partner recorded for {n_front} of {n_clubs} clubs, "
+      f"sleeve partner for {n_sleeve} of {n_clubs}, stadium naming rights for none yet. "
+      f"{missing_article} sponsor brands don't have a confirmed English Wikipedia "
+      f"article yet, so their attention isn't tracked. \"Not recorded\" means we haven't sourced it, not that "
+      f"the club has no sponsor.\n")
+print(charts.sponsor_directory() or "The dataset has no clubs yet.")
+```
 
 ## Which categories buy MLS's biggest assets?
 
@@ -55,6 +74,43 @@ else:
     fig.show()
 ```
 
+## Which clubs get the biggest match-day bump?
+
+```{python}
+fig = charts.club_match_lift()
+if fig is None:
+    print("No match data loaded yet.")
+else:
+    fig.show()
+```
+
+## Does winning matter?
+
+```{python}
+fig = charts.lift_by_result()
+if fig is None:
+    print("No match data loaded yet.")
+else:
+    fig.show()
+```
+
+A pageview day covers the whole UTC day, including the hours before kickoff,
+so this compares match days by result. It doesn't show that the result caused
+the extra views.
+
+## Which clubs are gaining attention this year?
+
+```{python}
+fig = charts.attention_by_season()
+if fig is None:
+    print("Not enough pageview history yet.")
+else:
+    fig.show()
+```
+
+Each year is compared over the same calendar window (January 1 to the latest
+day of data), so a partial season isn't compared with a full one.
+
 ## Methods and limitations
 
 - **Attention, not value.** Wikipedia pageviews are a proxy for public
@@ -62,6 +118,8 @@ else:
 - **Baseline.** A day's lift compares its views with the average of the 28
   days before it (the day itself is excluded). Days the API reports no views
   count as zero.
+- **Medians, not averages,** summarise match-day lift, so one viral day
+  doesn't dominate a club's number.
 - **Match day** is the UTC date of kickoff, the same clock Wikimedia uses. A
   late kickoff on the US West Coast falls on the next UTC day.
 - **Deal dates** are recorded by season. A deal runs from 1 January of its

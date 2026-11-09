@@ -5,6 +5,13 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 
 ## Unreleased (v0.1 candidate)
 
+### Report
+- Page and chart code for five new sections: sponsor directory with a coverage
+  line, match-day lift for every club (home vs away), lift by result, and
+  change in attention vs last year. They read four new models that Chris
+  writes (specs in `docs/REPORT_SQL.md`).
+- Intro no longer says stadium naming rights are tracked (none recorded yet).
+
 ### Dataset
 - First 57 rows of `partnerships.csv`: front-of-kit partners for 29 clubs and
   sleeve partners for 24 clubs, 2026 season. Sourced from two independent 2026
