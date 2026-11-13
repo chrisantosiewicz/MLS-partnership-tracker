@@ -3,7 +3,17 @@
 Dataset and pipeline changes, newest first. Dataset versions are git tags
 (`v0.1`, `v0.2`, ...).
 
-## Unreleased (v0.1 candidate)
+## Unreleased
+
+### Docs
+- README opens with a headline finding from `mart_category_share`, and the
+  ASCII pipeline sketch is now a Mermaid architecture diagram.
+- New `docs/DATA_MODEL.md`: ERD of the warehouse tables, the marts and how
+  they join.
+
+## v0.1 (2026-11-13)
+
+Tag `v0.1` points at the merge of PR #6.
 
 ### Dataset
 - Stadium naming rights for 25 clubs (Nov 5). Each row cites a club, brand or

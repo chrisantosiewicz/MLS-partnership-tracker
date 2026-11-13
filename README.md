@@ -1,28 +1,78 @@
 # MLS Partnership Tracker
 
+**Health care is the biggest buyer of MLS sponsorship.** 7 of the 30 clubs
+wear a hospital or health system on the front of the shirt, more than any
+other category (8 of 32 front-of-kit deals; FC Dallas has a different one on
+each kit). Counting sleeves and stadium names too, 14 of 30 clubs sell at
+least one of those assets to a health care brand. Banks lead stadium naming,
+with 6 of the 25 named stadiums, and BMO is on the front of three clubs'
+kits (LAFC, Toronto, Montréal).
+
+<sub>Deals current on 2026-11-13, from `mart_category_share` in
+[`sql/models/40_category_landscape.sql`](sql/models/40_category_landscape.sql).
+Brand categories are this project's own, set in
+[`data/brands.csv`](data/brands.csv) and defined in
+[`data/categories.csv`](data/categories.csv).</sub>
+
+**[See the live page](https://chrisantosiewicz.github.io/MLS-partnership-tracker/)**
+
+## What this is
+
 A sourced, versioned dataset of MLS club sponsorships, plus a daily pipeline
 that tracks public attention (Wikipedia pageviews) for each club and sponsor
 brand. It powers the sponsorship page of Chris Antosiewicz's portfolio site.
 
-> **Status:** foundations in progress. Dataset v0 covers 2026 front-of-kit
-> partners for all 30 clubs, and sleeve partners for the 26 clubs that sell
-> one (the other 4 carry only the league-wide Apple TV patch), and stadium
-> naming rights for the 25 clubs whose stadium name is sold.
+> **Status:** dataset v0.1 is complete for 2026. It covers front-of-kit
+> partners for all 30 clubs, sleeve partners for the 26 clubs that sell one
+> (the other 4 carry only the league-wide Apple TV patch), and stadium naming
+> rights for the 25 clubs whose stadium name is sold.
+
+Every row cites a source. Pageviews measure public attention, not what a
+sponsorship is worth, and deal values appear only where a source reported
+one.
 
 ## How it works
 
-```
-data/*.csv (hand-maintained) ───────────────────────────────┐
-Wikimedia Pageviews API → python/wiki_pageviews.py → data/raw/pageviews.parquet ─┤
-American Soccer Analysis → python/asa_matches.py → data/raw/matches.parquet ─────┤
-                                                                                 ▼
-        python/build.py: sql/schema.sql → sql/load.sql → sql/models/*.sql → tests/*.sql
-                                                                                 ▼
-                                                      site/ (Quarto) → GitHub Pages
+```mermaid
+flowchart LR
+    subgraph sources["Sources"]
+        csv["data/*.csv<br/>hand-maintained, sourced rows"]
+        wiki["Wikimedia Pageviews API"]
+        asa["American Soccer Analysis API"]
+    end
+
+    subgraph ingest["Ingestion (python/)"]
+        wp["wiki_pageviews.py<br/>incremental, one request at a time"]
+        am["asa_matches.py"]
+    end
+
+    raw[("data/raw/*.parquet<br/>committed daily")]
+
+    subgraph build["python/build.py into tracker.duckdb"]
+        direction TB
+        schema["schema.sql<br/>empty dim_, stg_, fact_ tables"]
+        load["load.sql<br/>CSV and parquet into tables"]
+        models["models/*.sql<br/>partnership_history and marts"]
+        tests{"tests/*.sql<br/>every test must return 0 rows"}
+        schema --> load --> models --> tests
+    end
+
+    site["site/ (Quarto)"]
+    pages["GitHub Pages"]
+    stop["Stop: nothing published,<br/>yesterday's page stays up"]
+
+    wiki --> wp --> raw
+    asa --> am --> raw
+    csv --> load
+    raw --> load
+    tests -- pass --> site --> pages
+    tests -- fail --> stop
 ```
 
-GitHub Actions runs the whole chain daily (`.github/workflows/daily.yml`). If
-any data test fails, nothing is published and the previous page stays up.
+GitHub Actions runs the whole chain daily at 09:17 UTC
+(`.github/workflows/daily.yml`). If any data test fails, nothing is published
+and the previous page stays up. The tables, their keys and how they join are
+in the [data model](docs/DATA_MODEL.md).
 
 | Folder | What's in it |
 |--------|--------------|
@@ -31,7 +81,7 @@ any data test fails, nothing is published and the previous page stays up.
 | `tests/` | Data tests: queries that must return zero rows. `tests/python/` has unit tests |
 | `python/` | Ingestion scripts and the build runner |
 | `site/` | Quarto page and chart code |
-| `docs/` | Project tracking: progress log, skill tracker, decisions, [walkthrough](docs/WALKTHROUGH.md) |
+| `docs/` | [Data model](docs/DATA_MODEL.md) (ERD), plus project tracking: progress log, skill tracker, decisions, [walkthrough](docs/WALKTHROUGH.md) |
 
 ## Run it locally
 
