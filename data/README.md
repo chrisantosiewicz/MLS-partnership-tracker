@@ -26,6 +26,7 @@ one continuous span of seasons. A renewal with the same brand extends
 | `source_url` | Where the row was verified |
 | `date_checked` | `YYYY-MM-DD`, the day the source was read |
 | `notes` | Anything a reviewer should know: conflicts between sources, second sources |
+| `sold_by` | Who sold the asset: `club`, or `stadium_owner` when the club plays in an external venue (an NFL or university stadium) whose naming rights belong to the venue, even when the venue shares an owner with the club. Kit assets are always `club` |
 
 ### Sourcing rules
 1. Primary source first (club or brand announcement). Then credible press. A

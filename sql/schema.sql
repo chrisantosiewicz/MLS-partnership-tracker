@@ -65,7 +65,8 @@ CREATE TABLE stg_partnerships (
     source_type                  VARCHAR,     -- 'primary', 'press' or 'roundup'
     source_url                   VARCHAR,
     date_checked                 DATE,
-    notes                        VARCHAR
+    notes                        VARCHAR,
+    sold_by                      VARCHAR      -- 'club' or 'stadium_owner' (an external venue, e.g. an NFL stadium)
 );
 
 -- One row per MLS match from American Soccer Analysis.

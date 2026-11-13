@@ -5,7 +5,9 @@ that tracks public attention (Wikipedia pageviews) for each club and sponsor
 brand. It powers the sponsorship page of Chris Antosiewicz's portfolio site.
 
 > **Status:** foundations in progress. Dataset v0 covers 2026 front-of-kit
-> (29 clubs) and sleeve (24 clubs) partners. Stadium naming rights are next.
+> partners for all 30 clubs, and sleeve partners for the 26 clubs that sell
+> one (the other 4 carry only the league-wide Apple TV patch), and stadium
+> naming rights for the 25 clubs whose stadium name is sold.
 
 ## How it works
 
