@@ -8,6 +8,7 @@ Nothing here is read by the pipeline.
 | `PROGRESS_LOG.md` | Current week's plan and status, newest week on top |
 | `SKILL_TRACKER.md` | Skill ratings with evidence, updated weekly |
 | `DECISIONS.md` | Standing decisions. One line each, with the date |
+| `DATA_MODEL.md` | ERD and table grains, for visitors and reviewers |
 | `WALKTHROUGH.md` | Teaching plan for the Claude-built foundation |
 | `REPORT_SQL.md` | Specs for the report-expansion models (arrives with PR #4) |
 | `_archive/` | Superseded plans and finished weeks of the log |
