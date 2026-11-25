@@ -26,12 +26,13 @@ one continuous span of seasons. A renewal with the same brand extends
 | `source_url` | Where the row was verified |
 | `date_checked` | `YYYY-MM-DD`, the day the source was read |
 | `notes` | Anything a reviewer should know: conflicts between sources, second sources |
+| `sold_by` | Who sold the asset: `club`, or `stadium_owner` when the club plays in an external venue (an NFL or university stadium) whose naming rights belong to the venue, even when the venue shares an owner with the club. Kit assets are always `club` |
 
 ### Sourcing rules
 1. Primary source first (club or brand announcement). Then credible press. A
    roundup is acceptable when two independent roundups agree; note the second
    one in `notes`.
-2. When sources disagree, leave the row out and list it in `PROGRESS_LOG.md`
+2. When sources disagree, leave the row out and list it in `TO_VERIFY.md`
    under "to verify". A blank is better than a guess.
 3. Upgrading a `roundup` row to a `primary` source, or `first_observed` to
    `announced`, is a normal edit: update the row and `date_checked`, and add a
