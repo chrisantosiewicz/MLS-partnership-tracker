@@ -5,6 +5,32 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 
 ## Unreleased
 
+### Site
+- Redesigned as a four-page site (Overview, Sponsors, Attention, Methods):
+  hero and headline-number tiles, finding cards linking to each chart, chart
+  cards whose titles state the finding, a "View data" table under every
+  chart, a searchable and filterable sponsor directory with a source link on
+  every deal, a club picker on the attention chart, and a dark mode that
+  re-colors charts with validated dark steps. Mobile layout checked at 390px.
+- Charts use a palette checked for color-vision deficiency in light and dark.
+
+### Analysis
+- Who sells the stadium name: `mart_stadium_naming_by_seller` compares
+  categories of club-sold and venue-sold (NFL or university stadium) naming
+  rights. Test: every current stadium deal counted once.
+- Do sponsors get noticed on match day: `mart_sponsor_match_day_attention`
+  compares a sponsor brand's Wikipedia views on its club's match days with its
+  own non-match days on the same weekday, during the deal only. The page runs a
+  sign test per brand with a Benjamini-Hochberg adjustment. A naive comparison
+  is confounded: 75% of matches fall on a UTC weekend, when company pages get
+  about 16% fewer views.
+
+### Research
+- `TO_VERIFY.md`: Portland (BofA front, Tillamook to sleeve), Sporting KC
+  stadium (no naming partner found) and San Jose sleeve history updated with
+  what the sources do and don't say. No CSV rows changed: none of the open
+  items has a source strong enough yet.
+
 ### Fix
 - Match-day attention now uses the UTC day that holds the match
   (`attention_date_utc`, UTC date two hours after kickoff) instead of the UTC

@@ -1,0 +1,61 @@
+---
+title: "Sponsors"
+subtitle: "Who holds every MLS club's front of kit, sleeve and stadium name, and which industries are buying"
+description: "A sourced directory of MLS club sponsors, the sponsor-category landscape, and who sells stadium naming rights."
+---
+
+```{python}
+#| include: false
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd()))
+import charts
+from charts import raw_html
+
+directory = charts.query("SELECT * FROM mart_sponsor_directory")
+missing_article = charts.query(
+    "SELECT COUNT(*) FROM dim_brand WHERE wikipedia_article IS NULL").iloc[0, 0]
+n = len(directory)
+cover = {col: int(directory[col].notna().sum())
+         for col in ["front_of_kit_brand", "sleeve_brand", "stadium_brand"]}
+```
+
+## Who sponsors each club?
+
+```{python}
+#| output: asis
+print(f"Front-of-kit partner recorded for **{cover['front_of_kit_brand']} of {n}** clubs, "
+      f"sleeve partner for **{cover['sleeve_brand']} of {n}**, stadium naming partner for "
+      f"**{cover['stadium_brand']} of {n}**. \"Not recorded\" means no sourced deal: some "
+      "stadiums have no paid name (Montréal's Stade Saputo carries the owner's company name), "
+      "and some sleeves are unsold or unconfirmed. Search or filter below; every row links to "
+      "its source.\n")
+print(raw_html(charts.sponsor_directory() or "<p>The dataset has no clubs yet.</p>"))
+```
+
+## Which categories buy MLS's biggest assets?
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.category_landscape(), "landscape",
+                           "The dataset has no current deals yet.")))
+```
+
+Most health care deals are regional hospital systems on the kit of their home
+club, such as Emory Healthcare in Atlanta, UCHealth in Colorado and MD Anderson in
+Houston. A category belongs to the brand, not the deal, so a bank on a
+kit and a bank on a stadium both count as banking.
+
+## Who sells the stadium name?
+
+Most clubs own or control their stadium and sell its name themselves. A few play
+in an NFL or university stadium whose naming rights belong to the venue, so the
+sponsor bought the building, not the club. Comparing the two shows what kinds of
+brands each kind of seller attracts.
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.stadium_by_seller(), "stadium-seller",
+                           "No stadium naming deals recorded yet.")))
+```

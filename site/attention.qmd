@@ -1,0 +1,79 @@
+---
+title: "Attention"
+subtitle: "How much public attention MLS clubs get on match day, whether results move it, and who is gaining"
+description: "Match-day Wikipedia attention for every MLS club: lift vs a 28-day baseline, by result, and year over year."
+---
+
+```{python}
+#| include: false
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd()))
+import charts
+from charts import raw_html
+
+FEATURED_CLUB = "STL"  # club the explorer opens on
+```
+
+Attention here is Wikipedia pageviews: how many people looked a club up on a given
+day. It is a proxy for **public attention**, not sponsor value. A club's *lift* on
+a match day compares that day's views with the average of the 28 days before it.
+
+## A club's year in attention
+
+```{python}
+#| output: asis
+explorer = charts.club_explorer(FEATURED_CLUB)
+if explorer is None:
+    print("No pageview data loaded yet.")
+else:
+    chart, select = explorer
+    html = charts.card(chart, "club-explorer")
+    # Put the club picker between the subtitle and the chart.
+    print(raw_html(html.replace("</figcaption>", "</figcaption>" + select, 1)))
+```
+
+## Which clubs get the biggest match-day bump?
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.club_match_lift(), "match-lift", "No match data loaded yet.")))
+```
+
+## Does winning matter?
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.lift_by_result(), "result-lift", "No match data loaded yet.")))
+```
+
+## Do sponsors get noticed on match day?
+
+If fans look up a club on match day, do they also look up the brands on its kit
+and stadium? This is the question a partnerships team would ask first, and the
+obvious way to answer it is wrong.
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.weekend_effect(), "weekend", "No match data loaded yet.")))
+```
+
+```{python}
+#| output: asis
+print(raw_html('''<div class="method-callout"><strong>The fix:</strong> compare each match day
+with the same brand's non-match days <em>on the same weekday</em>, during the
+deal only. A brand that held the sleeve from July counts only on match days from
+July. Then test whether more match days land above that norm than chance would
+give, adjusting for testing every brand at once.</div>'''))
+print(raw_html(charts.card(charts.sponsor_match_day(), "sponsor-attention",
+                           "Not enough sponsor pageview data yet.")))
+```
+
+## Which clubs are gaining attention?
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.attention_by_season(), "season-change",
+                           "Not enough pageview history yet.")))
+```
