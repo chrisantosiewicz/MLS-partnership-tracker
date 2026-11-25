@@ -89,10 +89,10 @@ def club_attention(club_id: str, days: int = 365) -> go.Figure | None:
     if df.empty:
         return None
     matches = query("""
-        SELECT l.match_date_utc, l.views, l.lift_vs_baseline, o.short_name AS opponent, l.venue
+        SELECT l.attention_date_utc, l.views, l.lift_vs_baseline, o.short_name AS opponent, l.venue
         FROM mart_match_day_lift AS l
         LEFT JOIN dim_club AS o ON o.club_id = l.opponent_club_id
-        WHERE l.club_id = ? AND l.match_date_utc >= ?
+        WHERE l.club_id = ? AND l.attention_date_utc >= ?
     """, [club_id, df["view_date"].min()])
     club = query("SELECT short_name FROM dim_club WHERE club_id = ?", [club_id]).iloc[0, 0]
 
@@ -105,7 +105,7 @@ def club_attention(club_id: str, days: int = 365) -> go.Figure | None:
                     hovertemplate="Baseline: %{y:,.0f}<extra></extra>")
     if not matches.empty:
         fig.add_scatter(
-            x=matches["match_date_utc"], y=matches["views"], name="Match day", mode="markers",
+            x=matches["attention_date_utc"], y=matches["views"], name="Match day", mode="markers",
             marker={"color": SERIES[1], "size": 9, "line": {"color": SURFACE, "width": 2}},
             customdata=matches[["opponent", "venue", "lift_vs_baseline"]],
             hovertemplate=("%{x|%b %d}: %{customdata[1]} vs %{customdata[0]}<br>"

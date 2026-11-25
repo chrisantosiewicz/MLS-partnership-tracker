@@ -122,8 +122,10 @@ day of data), so a partial season isn't compared with a full one.
   count as zero.
 - **Medians, not averages,** summarise match-day lift, so one viral day
   doesn't dominate a club's number.
-- **Match day** is the UTC date of kickoff, the same clock Wikimedia uses. A
-  late kickoff on the US West Coast falls on the next UTC day.
+- **Match day** is the UTC day that holds the match: the UTC date two hours
+  after kickoff, the same clock Wikimedia uses. A 7:30 pm ET kickoff
+  (23:30 UTC) counts on the next UTC day, when the match and the evening
+  after it happen.
 - **Deal dates** are recorded by season. A deal runs from 1 January of its
   first season to 31 December of its last, unless an exact date is known.
 - **Reported values** are shown only when a published source reports them,

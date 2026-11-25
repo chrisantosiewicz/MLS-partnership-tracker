@@ -5,6 +5,14 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 
 ## Unreleased
 
+### Fix
+- Match-day attention now uses the UTC day that holds the match
+  (`attention_date_utc`, UTC date two hours after kickoff) instead of the UTC
+  date of kickoff. A 7:30 pm ET kickoff is 23:30 UTC, so 37% of club-matches
+  were measured on the day before the match was played. Median match-day lift
+  across clubs rises from +24% to +38%, and no club's 2026 median is negative
+  any more (Orlando City was -11%). Decision updated in `docs/DECISIONS.md`.
+
 ### Report
 - Five new page sections: sponsor directory (front of kit, sleeve and
   stadium, with a coverage line), match-day lift for every club (home vs
