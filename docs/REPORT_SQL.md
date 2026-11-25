@@ -1,10 +1,16 @@
-# SQL for the expanded report (Chris writes these)
+# SQL for the expanded report
 
-The page and chart code for five new report sections is already in
-`site/index.qmd` and `site/charts.py`. The charts read four tables that don't
-exist yet. Write each one as a new file in `sql/models/`, then run
-`python python/build.py` and `python site/charts.py` to see your output in
-`site/_preview/`.
+**Status (Nov 25):** Chris asked Claude to write these four models so the
+report could ship ("doing the SQL can always be revisited"). They're in
+`sql/models/50_` to `80_`. Use this file as the walkthrough for them (section
+11 of `WALKTHROUGH.md`): read each spec, answer its questions, then try to
+rewrite the model from the spec without looking and diff against the
+committed one. They count as evidence in `SKILL_TRACKER.md` only once you can
+explain them.
+
+The page and chart code for the five report sections is in
+`site/index.qmd` and `site/charts.py`. Run `python python/build.py` and
+`python site/charts.py` to see the output in `site/_preview/`.
 
 Each spec gives the grain, the exact columns the chart reads, and a toy
 example of the main technique on made-up data, not on our tables. Work
@@ -34,6 +40,7 @@ recorded deal.
 | `front_of_kit_brand` | Current front-of-kit brand name(s); NULL if none recorded |
 | `front_of_kit_category` | That brand's category name |
 | `sleeve_brand`, `sleeve_category` | Same for the sleeve |
+| `stadium_brand`, `stadium_category`, `stadium_sold_by` | Same for stadium naming; `sold_by` from `stg_partnerships` |
 | `source_url` | One source for the club's row (NULL if no deals) |
 | `date_checked` | Latest `date_checked` across the club's current deals |
 

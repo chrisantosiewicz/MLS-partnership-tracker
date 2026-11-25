@@ -5,6 +5,17 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 
 ## Unreleased
 
+### Report
+- Five new page sections: sponsor directory (front of kit, sleeve and
+  stadium, with a coverage line), match-day lift for every club (home vs
+  away), lift by result, and change in attention vs last year.
+- Four new models: `mart_sponsor_directory`, `mart_club_match_lift`,
+  `mart_lift_by_result`, `mart_attention_by_season` (specs in
+  `docs/REPORT_SQL.md`). Written by Claude on Nov 25 at Chris's request, to
+  be walked through afterward.
+- Two new tests: one directory row per club; wins equal losses.
+- Intro says stadium naming rights are tracked again (25 clubs since Nov 5).
+
 ### Docs
 - README opens with a headline finding from `mart_category_share`, and the
   ASCII pipeline sketch is now a Mermaid architecture diagram.
@@ -14,13 +25,6 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 ## v0.1 (2026-11-13)
 
 Tag `v0.1` points at the merge of PR #6.
-
-### Report
-- Page and chart code for five new sections: sponsor directory with a coverage
-  line, match-day lift for every club (home vs away), lift by result, and
-  change in attention vs last year. They read four new models that Chris
-  writes (specs in `docs/REPORT_SQL.md`).
-- Intro no longer says stadium naming rights are tracked (none recorded yet).
 
 ### Dataset
 - Stadium naming rights for 25 clubs (Nov 5). Each row cites a club, brand or

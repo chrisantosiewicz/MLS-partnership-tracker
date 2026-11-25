@@ -26,9 +26,9 @@ def show_date(value) -> str:
     return "n/a" if value is None or str(value) == "NaT" else f"{value:%b %d, %Y}"
 ```
 
-This page rebuilds itself every day. It tracks the front-of-kit and sleeve
-partners of all 30 MLS clubs, and how much public attention (Wikipedia
-pageviews) each club and sponsor brand gets. Stadium naming rights are next.
+This page rebuilds itself every day. It tracks the front-of-kit, sleeve and
+stadium naming partners of all 30 MLS clubs, and how much public attention
+(Wikipedia pageviews) each club and sponsor brand gets.
 
 **Data status:** `{python} int(status.current_deals)` current deals across
 `{python} int(status.clubs_covered)` clubs · pageviews through
@@ -45,9 +45,11 @@ missing_article = charts.query(
 n_clubs = len(directory)
 n_front = int(directory["front_of_kit_brand"].notna().sum())
 n_sleeve = int(directory["sleeve_brand"].notna().sum())
+n_stadium = int(directory["stadium_brand"].notna().sum())
 
 print(f"**Coverage:** front-of-kit partner recorded for {n_front} of {n_clubs} clubs, "
-      f"sleeve partner for {n_sleeve} of {n_clubs}, stadium naming rights for none yet. "
+      f"sleeve partner for {n_sleeve} of {n_clubs}, stadium naming partner for "
+      f"{n_stadium} of {n_clubs}. "
       f"{missing_article} sponsor brands don't have a confirmed English Wikipedia "
       f"article yet, so their attention isn't tracked. \"Not recorded\" means we haven't sourced it, not that "
       f"the club has no sponsor.\n")

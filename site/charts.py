@@ -130,6 +130,7 @@ def sponsor_directory() -> str | None:
         SELECT short_name, conference,
                front_of_kit_brand, front_of_kit_category,
                sleeve_brand, sleeve_category,
+               stadium_brand, stadium_category, stadium_sold_by,
                source_url, date_checked
         FROM mart_sponsor_directory
         ORDER BY conference, short_name
@@ -137,11 +138,11 @@ def sponsor_directory() -> str | None:
     if df.empty:
         return None
 
-    def cell(brand, category) -> str:
+    def cell(brand, category, note: str = "") -> str:
         if brand is None or pd.isna(brand):
             return f"<td style='color:{MUTED}'>Not recorded</td>"
         return (f"<td>{escape(brand)}<br>"
-                f"<small style='color:{TEXT_2}'>{escape(category or '')}</small></td>")
+                f"<small style='color:{TEXT_2}'>{escape(category or '')}{note}</small></td>")
 
     rows = []
     for r in df.itertuples():
@@ -151,9 +152,10 @@ def sponsor_directory() -> str | None:
                     f"<small style='color:{TEXT_2}'>{escape(r.conference)}</small></td>"
                     f"{cell(r.front_of_kit_brand, r.front_of_kit_category)}"
                     f"{cell(r.sleeve_brand, r.sleeve_category)}"
+                    f"{cell(r.stadium_brand, r.stadium_category, ' · venue-sold' if r.stadium_sold_by == 'stadium_owner' else '')}"
                     f"<td><small>{source}</small></td></tr>")
     return ("<table class='table table-sm'><thead><tr><th>Club</th><th>Front of kit</th>"
-            "<th>Sleeve</th><th>Source</th></tr></thead><tbody>"
+            "<th>Sleeve</th><th>Stadium</th><th>Source</th></tr></thead><tbody>"
             + "".join(rows) + "</tbody></table>")
 
 
