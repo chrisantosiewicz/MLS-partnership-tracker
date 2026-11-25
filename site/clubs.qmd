@@ -1,0 +1,27 @@
+---
+title: "Clubs"
+subtitle: "A one-page profile for every MLS club: who holds its assets, how much attention it gets, and which categories other clubs sell that it doesn't"
+description: "Sponsorship and public-attention profiles for all 30 MLS clubs."
+---
+
+```{python}
+#| include: false
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd()))
+import charts
+from charts import raw_html
+```
+
+Pick a club. Every partner links to its source. The open-category list is a
+starting point for prospecting research: categories that at least three other
+clubs sell a tracked asset to, with the brands that buy them.
+
+```{python}
+#| output: asis
+print(raw_html(charts.club_profiles("STL") or "<p>No clubs yet.</p>"))
+```
+
+Attention numbers are Wikipedia pageviews, a proxy for public attention, not
+sponsor value. See [Methods](methods.qmd).

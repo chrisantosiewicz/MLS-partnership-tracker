@@ -4,6 +4,8 @@ project:
   render:
     - index.qmd
     - sponsors.qmd
+    - brands.qmd
+    - clubs.qmd
     - attention.qmd
     - methods.qmd
 
@@ -22,6 +24,10 @@ website:
         text: Overview
       - href: sponsors.qmd
         text: Sponsors
+      - href: brands.qmd
+        text: Brands
+      - href: clubs.qmd
+        text: Clubs
       - href: attention.qmd
         text: Attention
       - href: methods.qmd
@@ -38,10 +44,7 @@ website:
 
 format:
   html:
-    theme:
-      light: [cosmo, styles/brand.scss, styles/light.scss]
-      dark: [cosmo, styles/brand.scss, styles/dark.scss]
-    respect-user-color-scheme: true
+    theme: [cosmo, styles/brand.scss, styles/light.scss]
     toc: true
     toc-title: "On this page"
     toc-depth: 2

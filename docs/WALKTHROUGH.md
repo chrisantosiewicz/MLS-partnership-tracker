@@ -254,6 +254,26 @@ Written by Claude on Nov 25 at Chris's request.
 
 ---
 
+## 13. Market intelligence models (skills 1 and 5) · `sql/models/91_` to `94_`
+
+Written by Claude on Nov 25 at Chris's request.
+
+- `91_brand_portfolio.sql`: a brand-grain rollup with `STRING_AGG(DISTINCT ...)`.
+- `92_club_category_map.sql`: the club x category grain behind the heatmap.
+- `93_category_whitespace.sql`: `CROSS JOIN` every club with every category,
+  then `NOT EXISTS` to keep the gaps. A correlated subquery builds the
+  lookalike list.
+- `94_stadium_naming_tenure.sql`: why `first_observed` rows get
+  `tenure_known = false` instead of a made-up tenure.
+
+**Questions**
+1. Why does whitespace use `NOT EXISTS` instead of a `LEFT JOIN ... IS NULL`?
+   Would both give the same rows here?
+2. A partnerships VP reads "Banking: 11 clubs buy it" on St. Louis's profile.
+   What is the one caveat you'd say out loud?
+
+---
+
 ## Interview defense (skill 7), end of walkthrough
 1. "Walk me through how a new day of data gets onto the page."
 2. "How do you know your sponsor data is right?"

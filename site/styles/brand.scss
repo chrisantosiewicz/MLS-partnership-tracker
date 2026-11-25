@@ -138,3 +138,23 @@ a { text-underline-offset: 3px; }
 .finding .f-num { font-size: 1.7rem; }
 @media (max-width: 860px) { .findings { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 576px) { .findings { grid-template-columns: 1fr; } }
+
+/* ---------- brands and club profiles ---------- */
+.dir-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.profiles { margin: 1rem 0 2rem; }
+.profile-picker { margin-bottom: 1rem; }
+.profile { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem; box-shadow: var(--shadow); }
+.profile-name { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
+.profile-head { margin-bottom: 1rem; }
+.pp-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+.pp { border: 1px solid var(--line); border-radius: 10px; padding: .8rem .9rem; background: var(--surface-2); }
+.pp-asset { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); font-weight: 600; }
+.pp-brand { font-weight: 650; color: var(--ink); margin: .15rem 0; }
+.profile .kpi-row { margin: 1rem 0; }
+.profile .kpi { box-shadow: none; background: var(--surface-2); }
+.profile .kpi-value { font-size: 1.5rem; }
+.pp-h { font-size: 1rem; font-weight: 650; margin: 1.2rem 0 .2rem; }
+.gap-list { padding-left: 1.1rem; margin: .4rem 0 0; }
+.gap-list li { margin-bottom: .45rem; }
+.gap-list .dir-cat { display: inline; }
+@media (max-width: 576px) { .pp-row { grid-template-columns: 1fr; } }

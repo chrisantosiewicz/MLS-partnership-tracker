@@ -10,9 +10,7 @@ with a "View data" table under every chart (the accessible fallback, and the
 relief the palette's contrast check asks for).
 
 Colors follow the dataviz reference palette (validated for color-vision
-deficiency in light and dark). Charts are drawn with the light values;
-site/assets/theme.js swaps each one for its dark step when the reader
-switches the site to dark mode.
+deficiency on the white card surface).
 """
 
 from __future__ import annotations
@@ -30,7 +28,6 @@ from plotly.subplots import make_subplots
 
 DB_PATH = Path(__file__).resolve().parent.parent / "tracker.duckdb"
 
-# Light-mode values. theme.js holds the matching dark values (keep in sync).
 SERIES = ["#257de0", "#f47230", "#00b894"]   # categorical slots 1-3: blue, orange, aqua
 NEGATIVE = "#ec4647"                          # diverging pole opposite blue
 TEXT = "#191919"
@@ -666,6 +663,255 @@ def weekend_effect() -> Chart | None:
                  "Why a naive match-day comparison makes sponsors look ignored on match day")
 
 
+# ------------------------------------------------- market intelligence ---
+
+def brand_directory() -> str | None:
+    """Filterable HTML table: every current sponsor brand and its MLS footprint."""
+    df = query("""
+        SELECT brand_name, parent_company, category_name, clubs, deals,
+               club_list, asset_list, avg_daily_views_28d
+        FROM mart_brand_portfolio
+        ORDER BY clubs DESC, deals DESC, avg_daily_views_28d DESC NULLS LAST, brand_name
+    """)
+    if df.empty:
+        return None
+    rows = []
+    for r in df.itertuples():
+        parent = (f"<span class='dir-cat'>{escape(r.parent_company)}</span>"
+                  if isinstance(r.parent_company, str) else "")
+        views = (f"{r.avg_daily_views_28d:,.0f}" if pd.notna(r.avg_daily_views_28d)
+                 else "<span class='dir-missing'>no article</span>")
+        group = "multi" if r.clubs > 1 else "single"
+        search = " ".join(str(x) for x in [r.brand_name, r.parent_company, r.category_name,
+                                            r.club_list, r.asset_list] if isinstance(x, str)).lower()
+        rows.append(
+            f"<tr data-conf='{group}' data-search='{escape(search)}'>"
+            f"<th scope='row'><span class='dir-brand'>{escape(r.brand_name)}</span>{parent}</th>"
+            f"<td>{escape(r.category_name)}</td>"
+            f"<td><span class='dir-brand'>{escape(r.club_list)}</span>"
+            f"<span class='dir-cat'>{escape(r.asset_list)}</span></td>"
+            f"<td class='num'>{int(r.deals)}</td><td class='num'>{views}</td></tr>")
+    controls = (
+        "<div class='dir-controls' role='search'>"
+        "<input type='search' class='form-control dir-search' placeholder='Search brands, owners, "
+        "categories or clubs' aria-label='Search the brand directory'>"
+        "<div class='seg' role='group' aria-label='Footprint'>"
+        "<button type='button' class='seg-btn active' data-conf=''>All brands</button>"
+        "<button type='button' class='seg-btn' data-conf='multi'>Multi-club</button></div>"
+        "<span class='dir-count' aria-live='polite' data-noun='brands'></span></div>")
+    return (f"<div class='directory'>{controls}<div class='table-wrap'>"
+            "<table class='table dir-table'><thead><tr><th scope='col'>Brand</th>"
+            "<th scope='col'>Category</th><th scope='col'>MLS clubs and assets</th>"
+            "<th scope='col' class='num'>Deals</th>"
+            "<th scope='col' class='num' title='Average daily Wikipedia pageviews, last 28 days'>"
+            "Views/day</th></tr></thead><tbody>"
+            + "".join(rows) + "</tbody></table></div></div>")
+
+
+# Sequential blue ramp (dataviz palette), one step per number of assets held.
+MAP_STEPS = ["#f1f1ef", "#6aabf1", "#1757ac", "#0e3d7e"]
+
+
+def market_map() -> Chart | None:
+    """Heatmap: clubs x categories, cell = number of tracked assets sold."""
+    df = query("""
+        SELECT c.short_name, m.category_name, m.deals, m.deal_list
+        FROM mart_club_category_map AS m JOIN dim_club AS c USING (club_id)
+    """)
+    clubs = query("SELECT short_name FROM dim_club")["short_name"]
+    if df.empty:
+        return None
+    reach = df.groupby("category_name")["short_name"].nunique().sort_values(ascending=False)
+    cats = reach.index.tolist()
+    breadth = df.groupby("short_name")["category_name"].nunique().reindex(clubs, fill_value=0)
+    club_order = breadth.sort_values(kind="stable").index.tolist()   # fewest at the bottom
+    z = (df.pivot_table(index="short_name", columns="category_name", values="deals", aggfunc="sum")
+         .reindex(index=club_order, columns=cats).fillna(0))
+    text = (df.pivot_table(index="short_name", columns="category_name", values="deal_list",
+                           aggfunc="first").reindex(index=club_order, columns=cats).fillna("None tracked"))
+    top = int(z.values.max()) if z.size else 1
+    steps = MAP_STEPS[: top + 1]
+    scale = []
+    for i, color in enumerate(steps):           # discrete bands, one per integer
+        lo, hi = i / len(steps), (i + 1) / len(steps)
+        scale += [[lo, color], [hi, color]]
+
+    fig = go.Figure(go.Heatmap(
+        z=z.values, x=cats, y=club_order, text=text.values, zmin=-0.5, zmax=len(steps) - 0.5,
+        colorscale=scale, xgap=2, ygap=2, showscale=True,
+        colorbar={"title": {"text": "Assets", "side": "top"}, "tickvals": list(range(len(steps))),
+                  "ticktext": [str(i) for i in range(len(steps))], "thickness": 10, "len": 0.35,
+                  "y": 1, "yanchor": "top", "outlinewidth": 0},
+        hovertemplate="<b>%{y}</b> · %{x}<br>%{text}<extra></extra>"))
+    fig.update_xaxes(side="top", tickangle=-40, showgrid=False, tickfont={"size": 11})
+    fig.update_yaxes(showgrid=False, tickfont={"size": 11})
+    _style(fig, 22 * len(club_order) + 190)
+    fig.update_layout(margin={"t": 150, "l": 8, "r": 8, "b": 10})
+
+    first, second = reach.index[0], reach.index[1]
+    table = (z.astype(int).reset_index().rename(columns={"short_name": "Club"}))
+    return Chart(fig,
+                 f"{first} is on {int(reach.iloc[0])} of {len(clubs)} clubs' kits or stadiums; "
+                 f"{second.lower()} on {int(reach.iloc[1])}",
+                 "Which categories each club has sold its front of kit, sleeve and stadium name "
+                 "to. Darker cells hold more of the three assets. Hover for the brands",
+                 note=("Blank means no tracked deal in that category, not that the club has no "
+                       "partner there: this dataset covers three assets, not every sponsorship."),
+                 table=table)
+
+
+def stadium_tenure() -> Chart | None:
+    """Range bars: each current stadium name from its first season to now."""
+    df = query("""
+        SELECT short_name, brand_name, start_season, seasons_named, tenure_known, sold_by
+        FROM mart_stadium_naming_tenure
+        ORDER BY start_season DESC, short_name DESC
+    """)
+    if df.empty:
+        return None
+    now = int((df["start_season"] + df["seasons_named"] - 1).max())
+    df["label"] = df["brand_name"] + " · " + df["short_name"]
+
+    fig = go.Figure()
+    groups = [("club", True, SERIES[0], "Sold by the club"),
+              ("stadium_owner", True, SERIES[1], "Sold by the venue owner"),
+              (None, False, MUTED, "Start season not yet sourced")]
+    for sold_by, known, color, name in groups:
+        part = (df[~df["tenure_known"]] if not known
+                else df[df["tenure_known"] & (df["sold_by"] == sold_by)])
+        if part.empty:
+            continue
+        fig.add_bar(
+            y=part["label"], x=part["seasons_named"], base=part["start_season"] - 0.5,
+            orientation="h", name=name,
+            marker={"color": color, "cornerradius": 3},
+            customdata=part[["start_season", "seasons_named"]],
+            hovertemplate=("<b>%{y}</b><br>Since %{customdata[0]}"
+                           + (" (first season sourced)" if not known else "")
+                           + " · %{customdata[1]} seasons<extra></extra>"))
+    fig.update_layout(barmode="overlay", hovermode="closest", legend_traceorder="normal")
+    fig.update_yaxes(categoryorder="array", categoryarray=df["label"].tolist(), showgrid=False,
+                     tickfont={"size": 11})
+    fig.update_xaxes(dtick=2, range=[df["start_season"].min() - 1, now + 1])
+    _style(fig, 20 * len(df) + 110)
+
+    known = df[df["tenure_known"]]
+    recent = int((known["start_season"] >= now - 5).sum())
+    oldest = known.sort_values("start_season").iloc[0]
+    table = (df.sort_values("start_season")
+             .assign(start=lambda t: t["start_season"].astype(str)
+                     + t["tenure_known"].map({True: "", False: " (first observed)"}),
+                     sold_by=lambda t: t["sold_by"].map({"club": "Club",
+                                                         "stadium_owner": "Venue owner"}))
+             [["short_name", "brand_name", "start", "seasons_named", "sold_by"]]
+             .rename(columns={"short_name": "Club", "brand_name": "Brand", "start": "Since",
+                              "seasons_named": "Seasons", "sold_by": "Sold by"}))
+    return Chart(fig,
+                 f"{recent} of {len(known)} stadium names with a sourced start were sold in the "
+                 f"last six seasons; {oldest.brand_name} ({oldest.short_name}) has held its name "
+                 f"since {int(oldest.start_season)}",
+                 f"Current stadium naming deals, first season to {now}",
+                 table=table)
+
+
+def club_profiles(default_club: str = "STL") -> str | None:
+    """One profile block per club; the page's picker shows one at a time."""
+    clubs = query("SELECT club_id, short_name, club_name, conference, city FROM dim_club "
+                  "ORDER BY short_name")
+    if clubs.empty:
+        return None
+    directory = query("SELECT * FROM mart_sponsor_directory").set_index("club_id")
+    lift = query("""
+        SELECT club_id, season, matches, median_lift,
+               RANK() OVER (PARTITION BY season ORDER BY median_lift DESC) AS rnk,
+               COUNT(*) OVER (PARTITION BY season) AS n
+        FROM mart_club_match_lift
+        WHERE season = (SELECT MAX(season) FROM mart_club_match_lift)
+    """).set_index("club_id")
+    yoy = query("""
+        SELECT club_id, season, avg_daily_views, change_vs_prev,
+               RANK() OVER (ORDER BY change_vs_prev DESC) AS rnk,
+               COUNT(*) OVER () AS n
+        FROM mart_attention_by_season
+        WHERE season = (SELECT MAX(season) FROM mart_attention_by_season)
+          AND change_vs_prev IS NOT NULL
+    """).set_index("club_id")
+    gaps = query("""
+        SELECT club_id, category_name, clubs_buying, lookalike_brands
+        FROM mart_category_whitespace ORDER BY clubs_buying DESC, category_name
+    """)
+    tests = sponsor_match_day_tests()
+    portfolio = query("SELECT brand_name, avg_daily_views_28d FROM mart_brand_portfolio")
+    views = dict(zip(portfolio["brand_name"], portfolio["avg_daily_views_28d"]))
+
+    def partner(label, brand, category, source, extra=""):
+        if brand is None or pd.isna(brand):
+            return (f"<div class='pp'><div class='pp-asset'>{label}</div>"
+                    "<div class='pp-brand dir-missing'>Not recorded</div></div>")
+        link = (f" <a class='dir-src' href='{escape(source)}' rel='noopener' "
+                f"aria-label='Source'>↗</a>" if isinstance(source, str) else "")
+        return (f"<div class='pp'><div class='pp-asset'>{label}</div>"
+                f"<div class='pp-brand'>{escape(brand)}{link}</div>"
+                f"<div class='dir-cat'>{escape(category or '')}{extra}</div></div>")
+
+    blocks, options = [], []
+    for c in clubs.itertuples():
+        d = directory.loc[c.club_id] if c.club_id in directory.index else None
+        partners = ""
+        if d is not None:
+            venue = " · venue-sold" if d["stadium_sold_by"] == "stadium_owner" else ""
+            partners = (partner("Front of kit", d["front_of_kit_brand"], d["front_of_kit_category"],
+                                d["front_of_kit_source"])
+                        + partner("Sleeve", d["sleeve_brand"], d["sleeve_category"], d["sleeve_source"])
+                        + partner("Stadium", d["stadium_brand"], d["stadium_category"],
+                                  d["stadium_source"], venue))
+        stats = []
+        if c.club_id in lift.index:
+            l = lift.loc[c.club_id]
+            stats.append((pct(l["median_lift"]), "Typical match-day lift",
+                          f"#{int(l['rnk'])} of {int(l['n'])} in {int(l['season'])}"))
+        if c.club_id in yoy.index:
+            y = yoy.loc[c.club_id]
+            stats.append((pct(y["change_vs_prev"]), "Attention vs last year",
+                          f"#{int(y['rnk'])} of {int(y['n'])} · {y['avg_daily_views']:,.0f} views/day"))
+        t = tests[tests["club_id"] == c.club_id] if not tests.empty else tests
+        if len(t):
+            best = t.sort_values("median_excess_lift", ascending=False).iloc[0]
+            stats.append((pct(best["median_excess_lift"]), "Best sponsor match-day bump",
+                          f"{best['brand_name']} · "
+                          + ("reliable" if best["group"] == "Reliably higher" else "within chance")))
+        g = gaps[gaps["club_id"] == c.club_id].head(5)
+        if len(g):
+            items = []
+            for r in g.itertuples():
+                brands = r.lookalike_brands.split("; ")
+                shown = "; ".join(escape(b) for b in brands[:4])
+                more = f" and {len(brands) - 4} more" if len(brands) > 4 else ""
+                items.append(f"<li><strong>{escape(r.category_name)}</strong> "
+                             f"<span class='dir-cat'>{int(r.clubs_buying)} clubs buy it · "
+                             f"e.g. {shown}{more}</span></li>")
+            gap_html = ("<h4 class='pp-h'>Open categories to research</h4>"
+                        "<p class='dir-cat'>Categories at least 3 other clubs sold a tracked asset "
+                        "to, with none at this club, and who buys them elsewhere. A research list, "
+                        "not a claim the club has no partner there.</p>"
+                        f"<ul class='gap-list'>{''.join(items)}</ul>")
+        else:
+            gap_html = ""
+        hidden = "" if c.club_id == default_club else " hidden"
+        blocks.append(
+            f"<section class='profile' data-club='{c.club_id}'{hidden}>"
+            f"<div class='profile-head'><div><div class='profile-name'>{escape(c.club_name)}</div>"
+            f"<div class='dir-cat'>{escape(c.city)} · {escape(c.conference)} Conference</div></div></div>"
+            f"<div class='pp-row'>{partners}</div>"
+            f"{kpi_row(stats) if stats else ''}{gap_html}</section>")
+        options.append(f"<option value='{c.club_id}'{' selected' if not hidden else ''}>"
+                       f"{escape(c.short_name)}</option>")
+    picker = ("<div class='viz-controls profile-picker'><label for='profile-select'>Club</label>"
+              f"<select id='profile-select' class='form-select'>{''.join(options)}</select></div>")
+    return f"<div class='profiles'>{picker}{''.join(blocks)}</div>"
+
+
+
 if __name__ == "__main__":
     out = Path(__file__).resolve().parent / "_preview"
     out.mkdir(exist_ok=True)
@@ -674,7 +920,8 @@ if __name__ == "__main__":
               ("attention", explorer[0] if explorer else None),
               ("match_lift", club_match_lift()), ("result", lift_by_result()),
               ("season", attention_by_season()), ("sponsor", sponsor_match_day()),
-              ("weekend", weekend_effect())]
+              ("weekend", weekend_effect()), ("market_map", market_map()),
+              ("tenure", stadium_tenure())]
     for name, chart in charts:
         if chart is not None:
             chart.fig.update_layout(title=chart.title)
