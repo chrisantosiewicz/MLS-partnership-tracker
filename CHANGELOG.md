@@ -5,6 +5,25 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 
 ## Unreleased
 
+### Fix
+- Match-day attention now uses the UTC day that holds the match
+  (`attention_date_utc`, UTC date two hours after kickoff) instead of the UTC
+  date of kickoff. A 7:30 pm ET kickoff is 23:30 UTC, so 37% of club-matches
+  were measured on the day before the match was played. Median match-day lift
+  across clubs rises from +24% to +38%, and no club's 2026 median is negative
+  any more (Orlando City was -11%). Decision updated in `docs/DECISIONS.md`.
+
+### Report
+- Five new page sections: sponsor directory (front of kit, sleeve and
+  stadium, with a coverage line), match-day lift for every club (home vs
+  away), lift by result, and change in attention vs last year.
+- Four new models: `mart_sponsor_directory`, `mart_club_match_lift`,
+  `mart_lift_by_result`, `mart_attention_by_season` (specs in
+  `docs/REPORT_SQL.md`). Written by Claude on Nov 25 at Chris's request, to
+  be walked through afterward.
+- Two new tests: one directory row per club; wins equal losses.
+- Intro says stadium naming rights are tracked again (25 clubs since Nov 5).
+
 ### Docs
 - README opens with a headline finding from `mart_category_share`, and the
   ASCII pipeline sketch is now a Mermaid architecture diagram.

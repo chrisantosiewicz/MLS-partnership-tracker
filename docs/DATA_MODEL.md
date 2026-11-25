@@ -107,7 +107,7 @@ erDiagram
     dim_match {
         varchar match_id PK
         timestamp kickoff_utc
-        date match_date_utc "same clock as pageviews"
+        date match_date_utc "UTC date of kickoff"
         integer season
         varchar home_club_id FK
         varchar away_club_id FK
@@ -159,7 +159,7 @@ flowchart LR
 | Mart | Grain | Answers |
 |------|-------|---------|
 | `mart_attention_daily` | One row per club or brand per UTC day | Daily pageviews against the trailing 28-day baseline |
-| `mart_match_day_lift` | One row per club per match | How far a club's pageviews rise on match day |
+| `mart_match_day_lift` | One row per club per match | How far a club's pageviews rise on match day (`attention_date_utc` = UTC date two hours after kickoff) |
 | `mart_category_share` | One row per asset per category | Which categories buy each asset, among current deals |
 | `mart_club_sponsor_attention` | One row per club | Attention its current sponsor brands get, last 28 days |
 

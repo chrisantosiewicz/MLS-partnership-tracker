@@ -215,6 +215,21 @@ without any deal in `partnerships.csv`". Decide whether it's a `test_` or `warn_
 
 ---
 
+## 11. Report models (skills 1 and 5) · `sql/models/50_` to `80_`
+
+Written by Claude on Nov 25 at Chris's request. Specs, toy examples and
+questions are in `REPORT_SQL.md`; work through them in order.
+
+- Pivot with `STRING_AGG ... FILTER`, starting `FROM dim_club` (directory).
+- `MEDIAN ... FILTER` for home/away in one pass (club lift).
+- `CASE` from each club's point of view (lift by result).
+- Like-for-like `DAYOFYEAR` windows and `LAG` (attention by season).
+
+**Exercise:** rewrite `60_club_match_lift.sql` from the spec without looking,
+then diff it against the committed file.
+
+---
+
 ## Interview defense (skill 7), end of walkthrough
 1. "Walk me through how a new day of data gets onto the page."
 2. "How do you know your sponsor data is right?"
