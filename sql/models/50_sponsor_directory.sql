@@ -39,6 +39,10 @@ SELECT
     STRING_AGG(DISTINCT d.category_name, ' / ')
         FILTER (WHERE d.asset_id = 'stadium_naming')                   AS stadium_category,
     MAX(d.sold_by) FILTER (WHERE d.asset_id = 'stadium_naming')        AS stadium_sold_by,
+    -- One source link per asset cell (the first by kit_scope when there are two).
+    ARG_MIN(d.source_url, d.kit_scope) FILTER (WHERE d.asset_id = 'front_of_kit')   AS front_of_kit_source,
+    ARG_MIN(d.source_url, d.kit_scope) FILTER (WHERE d.asset_id = 'sleeve')         AS sleeve_source,
+    ARG_MIN(d.source_url, d.kit_scope) FILTER (WHERE d.asset_id = 'stadium_naming') AS stadium_source,
     -- One source per club: the front-of-kit row's if there is one.
     ARG_MIN(d.source_url, CASE d.asset_id WHEN 'front_of_kit' THEN 1
                                          WHEN 'sleeve' THEN 2 ELSE 3 END) AS source_url,

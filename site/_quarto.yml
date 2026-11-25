@@ -1,22 +1,65 @@
 project:
   type: website
   output-dir: _site
+  render:
+    - index.qmd
+    - sponsors.qmd
+    - attention.qmd
+    - methods.qmd
 
 website:
   title: "MLS Partnership Tracker"
+  description: "A sourced dataset of MLS club sponsorships, with daily public-attention tracking from Wikipedia pageviews."
+  site-url: https://chrisantosiewicz.github.io/MLS-partnership-tracker/
+  favicon: assets/favicon.svg
+  open-graph: true
+  twitter-card: true
+  page-navigation: true
   navbar:
+    logo: assets/favicon.svg
+    left:
+      - href: index.qmd
+        text: Overview
+      - href: sponsors.qmd
+        text: Sponsors
+      - href: attention.qmd
+        text: Attention
+      - href: methods.qmd
+        text: Methods
     right:
-      - text: "Code"
+      - icon: github
         href: https://github.com/chrisantosiewicz/MLS-partnership-tracker
+        aria-label: Code on GitHub
       - text: "Dataset (CSV)"
         href: https://github.com/chrisantosiewicz/MLS-partnership-tracker/blob/main/data/partnerships.csv
+  page-footer:
+    left: "Built by Chris Antosiewicz · Data CC BY 4.0 · Code MIT"
+    right: "Rebuilt daily from [Wikimedia](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/) and [American Soccer Analysis](https://www.americansocceranalysis.com/) data"
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: [cosmo, styles/brand.scss, styles/light.scss]
+      dark: [cosmo, styles/brand.scss, styles/dark.scss]
+    respect-user-color-scheme: true
     toc: true
-    code-fold: true
-    code-summary: "Show the code"
+    toc-title: "On this page"
+    toc-depth: 2
+    smooth-scroll: true
+    anchor-sections: true
+    grid:
+      body-width: 960px
+    include-in-header:
+      - text: |
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+          <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@4.1.1/plotly.min.js" charset="utf-8"></script>
+    include-after-body:
+      - text: |
+          <script src="assets/theme.js"></script>
+    resources:
+      - assets/
 
 execute:
   echo: false

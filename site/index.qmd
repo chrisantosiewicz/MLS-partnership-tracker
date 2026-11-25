@@ -1,6 +1,9 @@
 ---
-title: "Who sponsors MLS, and who's paying attention?"
-subtitle: "A sourced dataset of MLS club sponsorships, with daily public-attention tracking"
+title: "MLS Partnership Tracker"
+pagetitle: "MLS Partnership Tracker"
+body-classes: page-index
+description: "Who sponsors every MLS club, and how much public attention clubs get on match day. A sourced dataset with a daily pipeline."
+toc: false
 ---
 
 ```{python}
@@ -10,134 +13,120 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path.cwd()))
 import charts
+from charts import raw_html, pct
 
-FEATURED_CLUB = "STL"  # club for the attention chart
-
-status = charts.query("""
-    SELECT
-        (SELECT COUNT(*) FROM partnership_history WHERE is_current) AS current_deals,
-        (SELECT COUNT(DISTINCT club_id) FROM partnership_history WHERE is_current) AS clubs_covered,
-        (SELECT MAX(view_date) FROM fact_pageviews_daily) AS pageviews_through,
-        (SELECT MAX(date_checked) FROM stg_partnerships) AS last_checked
+s = charts.status()
+landscape = charts.category_landscape()
+share = charts.query("""
+    SELECT category_name, SUM(deals) AS deals FROM mart_category_share
+    GROUP BY 1 ORDER BY 2 DESC LIMIT 1
 """).iloc[0]
-
-
-def show_date(value) -> str:
-    return "n/a" if value is None or str(value) == "NaT" else f"{value:%b %d, %Y}"
+result = charts.query("SELECT result, median_lift FROM mart_lift_by_result WHERE venue = 'home'"
+                      ).set_index("result")["median_lift"]
+season = charts.query("""
+    SELECT c.short_name, s.change_vs_prev, s.season,
+           COUNT(*) OVER () AS clubs,
+           COUNT(*) FILTER (WHERE s.change_vs_prev > 0) OVER () AS up
+    FROM mart_attention_by_season AS s JOIN dim_club AS c USING (club_id)
+    WHERE s.season = (SELECT MAX(season) FROM mart_attention_by_season)
+      AND s.change_vs_prev IS NOT NULL
+    ORDER BY s.change_vs_prev DESC LIMIT 1
+""").iloc[0]
+n_tests = len(list((Path.cwd().parent / "tests").glob("test_*.sql")))
+tests = charts.sponsor_match_day_tests()
+higher = int((tests["group"] == "Reliably higher").sum())
+top_lift = charts.query("""
+    SELECT c.short_name, l.median_lift, l.season FROM mart_club_match_lift AS l
+    JOIN dim_club AS c USING (club_id)
+    WHERE l.season = (SELECT MAX(season) FROM mart_club_match_lift)
+    ORDER BY l.median_lift DESC LIMIT 1
+""").iloc[0]
+stadium = charts.query("""
+    SELECT SUM(deals) FILTER (WHERE sold_by = 'stadium_owner') AS venue_sold,
+           SUM(deals) AS total
+    FROM mart_stadium_naming_by_seller
+""").iloc[0]
 ```
-
-This page rebuilds itself every day. It tracks the front-of-kit, sleeve and
-stadium naming partners of all 30 MLS clubs, and how much public attention
-(Wikipedia pageviews) each club and sponsor brand gets.
-
-**Data status:** `{python} int(status.current_deals)` current deals across
-`{python} int(status.clubs_covered)` clubs · pageviews through
-`{python} show_date(status.pageviews_through)` · dataset last checked
-`{python} show_date(status.last_checked)`.
-
-## Who sponsors each club?
 
 ```{python}
 #| output: asis
-directory = charts.query("SELECT * FROM mart_sponsor_directory")
-missing_article = charts.query(
-    "SELECT COUNT(*) FROM dim_brand WHERE wikipedia_article IS NULL").iloc[0, 0]
-n_clubs = len(directory)
-n_front = int(directory["front_of_kit_brand"].notna().sum())
-n_sleeve = int(directory["sleeve_brand"].notna().sum())
-n_stadium = int(directory["stadium_brand"].notna().sum())
-
-print(f"**Coverage:** front-of-kit partner recorded for {n_front} of {n_clubs} clubs, "
-      f"sleeve partner for {n_sleeve} of {n_clubs}, stadium naming partner for "
-      f"{n_stadium} of {n_clubs}. "
-      f"{missing_article} sponsor brands don't have a confirmed English Wikipedia "
-      f"article yet, so their attention isn't tracked. \"Not recorded\" means we haven't sourced it, not that "
-      f"the club has no sponsor.\n")
-print(charts.sponsor_directory() or "The dataset has no clubs yet.")
+print(raw_html(f"""
+<section class="hero">
+  <div class="eyebrow">Sponsorship research · Public-attention data</div>
+  <h1>Who sponsors MLS, and who's paying attention?</h1>
+  <p>Every front-of-kit, sleeve and stadium naming partner across all {int(s.clubs_total)} MLS clubs,
+  each with a cited source, joined to daily Wikipedia attention for every club and sponsor brand
+  and {int(s.club_match_days):,} club match days.</p>
+  <div class="hero-actions">
+    <a class="btn-solid" href="sponsors.html">Explore the sponsors</a>
+    <a class="btn-ghost" href="attention.html">See match-day attention</a>
+  </div>
+  <div class="live">Rebuilt daily · pageviews through {charts.show_date(s.pageviews_through)}</div>
+</section>
+"""))
+print(raw_html(charts.kpi_row([
+    (f"{int(s.current_deals)}", "Current deals", f"{int(s.brands)} sponsor brands"),
+    (f"{int(s.clubs_covered)}/{int(s.clubs_total)}", "Clubs covered", "front of kit, sleeve, stadium"),
+    (f"{s.rows_sourced / s.rows_total:.0%}", "Rows with a source", f"last checked {charts.show_date(s.last_checked)}"),
+    (f"{int(s.club_match_days):,}", "Club match days", f"pageviews since {s.pageviews_from:%Y}"),
+])))
 ```
 
-## Which categories buy MLS's biggest assets?
+## What the data says
 
 ```{python}
-fig = charts.category_landscape()
-if fig is None:
-    print("The dataset has no current deals yet.")
-else:
-    fig.show()
+#| output: asis
+print(raw_html(f"""
+<div class="findings">
+  <a class="finding" href="sponsors.html#which-categories-buy-mlss-biggest-assets">
+    <div class="f-num">{int(share.deals)} of {int(s.current_deals)}</div>
+    <div class="f-text">current kit and stadium deals go to <strong>{share.category_name}</strong> brands, the largest category.</div>
+    <div class="f-link">Category landscape →</div></a>
+  <a class="finding" href="attention.html#which-clubs-get-the-biggest-match-day-bump">
+    <div class="f-num">{pct(top_lift.median_lift)}</div>
+    <div class="f-text"><strong>{top_lift.short_name}</strong> gets the biggest typical match-day jump in Wikipedia attention of any club in {int(top_lift.season)}.</div>
+    <div class="f-link">Match-day bump by club →</div></a>
+  <a class="finding" href="attention.html#does-winning-matter">
+    <div class="f-num">{pct(result['win'])} vs {pct(result['loss'])}</div>
+    <div class="f-text">median match-day attention lift for a club's page after a home win vs a home loss.</div>
+    <div class="f-link">Results and attention →</div></a>
+  <a class="finding" href="attention.html#which-clubs-are-gaining-attention">
+    <div class="f-num">{int(season.up)} of {int(season.clubs)}</div>
+    <div class="f-text">clubs get more Wikipedia views than last year. {season.short_name} is up most ({pct(season.change_vs_prev)}).</div>
+    <div class="f-link">Year-over-year attention →</div></a>
+  <a class="finding" href="attention.html#do-sponsors-get-noticed-on-match-day">
+    <div class="f-num">{higher} of {len(tests)}</div>
+    <div class="f-text">sponsor brands get reliably more Wikipedia attention on their club's match days, once the weekend dip is accounted for.</div>
+    <div class="f-link">Sponsor attention →</div></a>
+  <a class="finding" href="sponsors.html#who-sells-the-stadium-name">
+    <div class="f-num">{int(stadium.venue_sold)} of {int(stadium.total)}</div>
+    <div class="f-text">stadium names are sold by an outside venue owner (an NFL or university stadium), not the club.</div>
+    <div class="f-link">Venue ownership →</div></a>
+</div>
+"""))
 ```
 
-## What a match day does for a club's attention
+## The headline chart
 
 ```{python}
-fig = charts.club_attention(FEATURED_CLUB)
-if fig is None:
-    print("No pageview data loaded yet.")
-else:
-    fig.show()
+#| output: asis
+print(raw_html(charts.card(landscape, "landscape-home", "The dataset has no current deals yet.")))
 ```
 
-## Which clubs get the biggest match-day bump?
+## How it works
 
 ```{python}
-fig = charts.club_match_lift()
-if fig is None:
-    print("No match data loaded yet.")
-else:
-    fig.show()
+#| output: asis
+print(raw_html(f"""
+<div class="pipeline">
+  <div><strong>Hand-sourced dataset</strong>Every deal is a CSV row with a source URL and the date it was checked.</div>
+  <div><strong>Daily ingestion</strong>Wikipedia pageviews (Wikimedia API) and MLS results (American Soccer Analysis), incremental and idempotent.</div>
+  <div><strong>DuckDB warehouse</strong>A type 2 deal history, a 28-day attention baseline and match-day lift, built in SQL.</div>
+  <div><strong>Tested every run</strong>{n_tests} SQL data tests gate the publish. A failed test keeps yesterday's page up.</div>
+  <div><strong>Published here</strong>GitHub Actions renders this site every morning.</div>
+</div>
+"""))
 ```
 
-## Does winning matter?
-
-```{python}
-fig = charts.lift_by_result()
-if fig is None:
-    print("No match data loaded yet.")
-else:
-    fig.show()
-```
-
-A pageview day covers the whole UTC day, including the hours before kickoff,
-so this compares match days by result. It doesn't show that the result caused
-the extra views.
-
-## Which clubs are gaining attention this year?
-
-```{python}
-fig = charts.attention_by_season()
-if fig is None:
-    print("Not enough pageview history yet.")
-else:
-    fig.show()
-```
-
-Each year is compared over the same calendar window (January 1 to the latest
-day of data), so a partial season isn't compared with a full one.
-
-## Methods and limitations
-
-- **Attention, not value.** Wikipedia pageviews are a proxy for public
-  attention. They are not a measure of sponsorship value, reach or return.
-- **Baseline.** A day's lift compares its views with the average of the 28
-  days before it (the day itself is excluded). Days the API reports no views
-  count as zero.
-- **Medians, not averages,** summarise match-day lift, so one viral day
-  doesn't dominate a club's number.
-- **Match day** is the UTC day that holds the match: the UTC date two hours
-  after kickoff, the same clock Wikimedia uses. A 7:30 pm ET kickoff
-  (23:30 UTC) counts on the next UTC day, when the match and the evening
-  after it happen.
-- **Deal dates** are recorded by season. A deal runs from 1 January of its
-  first season to 31 December of its last, unless an exact date is known.
-- **Reported values** are shown only when a published source reports them,
-  and are labelled "reported".
-- **Coverage.** The dataset is maintained by hand and may miss recent changes.
-  Each row links to its source and the date it was checked.
-
-## Sources
-
-- Sponsorship data: compiled by Chris Antosiewicz from club and brand
-  announcements and press coverage. Each row's source is in the
-  [dataset](https://github.com/chrisantosiewicz/MLS-partnership-tracker/blob/main/data/partnerships.csv).
-  Licensed CC BY 4.0.
-- Pageviews: [Wikimedia Analytics API](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/) (CC0).
-- Match schedules and results: [American Soccer Analysis](https://www.americansocceranalysis.com/).
+Pageviews measure **public attention**, not sponsorship value, reach or return.
+See [Methods](methods.qmd) for how each number is built and where it falls short.

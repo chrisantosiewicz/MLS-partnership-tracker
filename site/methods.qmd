@@ -1,0 +1,76 @@
+---
+title: "Methods"
+subtitle: "How each number is built, where it falls short, and where the data comes from"
+description: "Methods, limitations and sources for the MLS Partnership Tracker."
+---
+
+```{python}
+#| include: false
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd()))
+import charts
+
+s = charts.status()
+```
+
+```{python}
+#| output: asis
+print(f"**Data status:** {int(s.current_deals)} current deals across {int(s.clubs_covered)} clubs · "
+      f"pageviews {charts.show_date(s.pageviews_from)} to {charts.show_date(s.pageviews_through)} · "
+      f"dataset last checked {charts.show_date(s.last_checked)}.\n")
+```
+
+## Methods and limitations
+
+- **Attention, not value.** Wikipedia pageviews are a proxy for public
+  attention. They are not a measure of sponsorship value, reach or return.
+- **Baseline.** A day's lift compares its views with the average of the 28
+  days before it (the day itself is excluded). Days the API reports no views
+  count as zero.
+- **Medians, not averages,** summarise match-day lift, so one viral day
+  doesn't dominate a club's number.
+- **Match day** is the UTC day that holds the match: the UTC date two hours
+  after kickoff, on the same clock Wikimedia uses. A 7:30 pm ET kickoff
+  (23:30 UTC) counts on the next UTC day, when the match and the evening
+  after it happen. An earlier version used the UTC date of kickoff, which
+  measured about a third of club-matches on the day before they were played.
+- **Sponsor attention on match day** compares each match day with the same
+  brand's non-match days on the same weekday, during the deal only (an as-of
+  join on the deal's start and end). A sign test per brand checks whether more
+  match days sit above that norm than chance would give, with a
+  Benjamini-Hochberg adjustment because every brand is tested at once.
+- **Results** are from each club's own point of view. A pageview day includes
+  the hours before kickoff, so result comparisons show correlation, not cause.
+- **Year over year** compares the same calendar window (January 1 to the
+  latest day of data) in each year.
+- **Deal dates** are recorded by season. A deal runs from 1 January of its
+  first season to 31 December of its last, unless an exact date is known.
+  Most rows are `first_observed` (the first season we have a source for), so
+  the dataset is a reliable picture of 2026, not yet a full history.
+- **Who sold it.** Stadium rows record whether the club or an outside venue
+  owner sold the name. Kit assets are always sold by the club.
+- **Reported values** are shown only when a published source reports them,
+  and are labelled "reported".
+- **Coverage.** The dataset is maintained by hand and may miss recent changes.
+  Each row links to its source and the date it was checked. Open questions
+  are listed in
+  [`data/TO_VERIFY.md`](https://github.com/chrisantosiewicz/MLS-partnership-tracker/blob/main/data/TO_VERIFY.md).
+
+## Pipeline
+
+Every morning a GitHub Actions job fetches new pageviews and match results,
+rebuilds a DuckDB warehouse from scratch, runs every SQL data test, and only
+then renders and publishes this site. If a test fails, nothing is published and
+yesterday's site stays up. The data model is documented in
+[`docs/DATA_MODEL.md`](https://github.com/chrisantosiewicz/MLS-partnership-tracker/blob/main/docs/DATA_MODEL.md).
+
+## Sources
+
+- **Sponsorship data:** compiled by Chris Antosiewicz from club and brand
+  announcements and press coverage. Each row's source is in the
+  [dataset](https://github.com/chrisantosiewicz/MLS-partnership-tracker/blob/main/data/partnerships.csv).
+  Licensed CC BY 4.0.
+- **Pageviews:** [Wikimedia Analytics API](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/) (CC0).
+- **Match schedules and results:** [American Soccer Analysis](https://www.americansocceranalysis.com/).

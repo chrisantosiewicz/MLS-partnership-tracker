@@ -1,0 +1,30 @@
+/*-- scss:defaults --*/
+$body-bg: #f6f6f3;
+$body-color: #191919;
+$primary: #1b64be;
+$link-color: #1b64be;
+$navbar-bg: #ffffff;
+$navbar-fg: #191919;
+$navbar-hl: #1b64be;
+$footer-bg: #f6f6f3;
+$border-color: #e6e6e3;
+$code-color: #6a4ce2;
+
+/*-- scss:rules --*/
+:root {
+  --surface: #ffffff;
+  --surface-2: #fbfbf9;
+  --page: #f6f6f3;
+  --ink: #191919;
+  --ink-2: #666666;
+  --ink-3: #8c8c8c;
+  --line: #e6e6e3;
+  --accent: #1b64be;
+  --accent-soft: #e6f0fc;
+  --s1: #257de0;
+  --s2: #f47230;
+  --s3: #00b894;
+  --hero-a: #0e3d7e;
+  --hero-b: #1b64be;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+}

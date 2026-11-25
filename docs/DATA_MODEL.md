@@ -142,6 +142,12 @@ flowchart LR
     mml["mart_match_day_lift<br/>club x match"]
     mcs["mart_category_share<br/>asset x category"]
     mcsa["mart_club_sponsor_attention<br/>one row per club"]
+    msd["mart_sponsor_directory<br/>one row per club"]
+    mcl["mart_club_match_lift<br/>club x season"]
+    mlr["mart_lift_by_result<br/>result x venue"]
+    mas["mart_attention_by_season<br/>club x year"]
+    mss["mart_stadium_naming_by_seller<br/>seller x category"]
+    msm["mart_sponsor_match_day_attention<br/>club x sponsor brand"]
 
     fp --> mad
     dc --> mad
@@ -154,6 +160,16 @@ flowchart LR
     dcat --> mcs
     ph --> mcsa
     mad --> mcsa
+    ph --> msd
+    dc --> msd
+    mml --> mcl
+    mml --> mlr
+    dm --> mlr
+    mad --> mas
+    ph --> mss
+    ph --> msm
+    mad --> msm
+    mml --> msm
 ```
 
 | Mart | Grain | Answers |
@@ -162,6 +178,12 @@ flowchart LR
 | `mart_match_day_lift` | One row per club per match | How far a club's pageviews rise on match day (`attention_date_utc` = UTC date two hours after kickoff) |
 | `mart_category_share` | One row per asset per category | Which categories buy each asset, among current deals |
 | `mart_club_sponsor_attention` | One row per club | Attention its current sponsor brands get, last 28 days |
+| `mart_sponsor_directory` | One row per club (all 30) | Current front-of-kit, sleeve and stadium partners, with a source per asset |
+| `mart_club_match_lift` | One row per club per season | Median match-day lift, home and away |
+| `mart_lift_by_result` | One row per result per venue | Median lift after a win, draw or loss |
+| `mart_attention_by_season` | One row per club per year | Average daily views over a like-for-like calendar window, vs last year |
+| `mart_stadium_naming_by_seller` | One row per seller per category | Stadium naming categories, club-sold vs venue-sold |
+| `mart_sponsor_match_day_attention` | One row per club per sponsor brand | Brand's match-day views vs its own same-weekday norm during the deal |
 
 Pageviews are a proxy for public attention, never sponsor value.
 

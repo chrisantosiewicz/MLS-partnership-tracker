@@ -230,6 +230,30 @@ then diff it against the committed file.
 
 ---
 
+## 12. Venue ownership and sponsor attention (skills 1, 5 and 6) · `sql/models/90_`, `95_`, `site/charts.py`
+
+Written by Claude on Nov 25 at Chris's request.
+
+- `90_stadium_naming_by_seller.sql`: joining `sold_by` back from the source
+  rows on the deal's natural key, and a test that the join neither loses nor
+  doubles a deal.
+- `95_sponsor_match_day_attention.sql`: an as-of join on deal dates, then a
+  same-weekday control. The confound it removes: matches cluster on UTC
+  Sundays, when company pages dip.
+- `charts.py` `sponsor_match_day_tests()`: an exact sign test and the
+  Benjamini-Hochberg adjustment.
+- `30_match_day_lift.sql`: why `attention_date_utc` replaced the UTC date of
+  kickoff (a 7:30 pm ET match is 23:30 UTC).
+
+**Questions**
+1. Why compare against the same weekday instead of the 28-day baseline alone?
+2. The note under the chart gives how many brands pass a plain 5% test and
+   how many chance alone would give. What does the adjustment do, and why
+   does it matter when you test 58 brands at once?
+3. Why do only 5 venue-sold stadium deals stop you from claiming a pattern?
+
+---
+
 ## Interview defense (skill 7), end of walkthrough
 1. "Walk me through how a new day of data gets onto the page."
 2. "How do you know your sponsor data is right?"
