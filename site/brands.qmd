@@ -1,0 +1,50 @@
+---
+title: "Brands"
+subtitle: "Every brand on an MLS front of kit, sleeve or stadium, its footprint across the league, and how much public attention it gets"
+description: "A directory of MLS sponsor brands with their clubs, assets and Wikipedia attention."
+---
+
+```{python}
+#| include: false
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd()))
+import charts
+from charts import raw_html
+
+b = charts.query("""
+    SELECT COUNT(*) AS brands,
+           COUNT(*) FILTER (WHERE clubs > 1) AS multi,
+           COUNT(*) FILTER (WHERE avg_daily_views_28d IS NOT NULL) AS tracked,
+           COUNT(DISTINCT parent_company) AS parents
+    FROM mart_brand_portfolio
+""").iloc[0]
+multi = charts.query("""
+    SELECT brand_name, clubs, club_list FROM mart_brand_portfolio
+    WHERE clubs > 1 ORDER BY clubs DESC, brand_name
+""")
+```
+
+```{python}
+#| output: asis
+print(raw_html(charts.kpi_row([
+    (f"{int(b.brands)}", "Sponsor brands", "with a current tracked deal"),
+    (f"{int(b.multi)}", "Multi-club brands", "hold assets at 2+ clubs"),
+    (f"{int(b.tracked)}", "With attention data", "confirmed Wikipedia article"),
+])))
+names = "; ".join(f"**{r.brand_name}** ({r.club_list})" for r in multi.itertuples())
+print(f"Most MLS sponsorship is local: a brand buys into one club's market. "
+      f"Only {int(b.multi)} brands hold assets at more than one club: {names}.\n")
+```
+
+## Brand directory
+
+Search by brand, owner, category or club. *Views/day* is the brand's average
+daily Wikipedia pageviews over the last 28 days: its public attention overall,
+not attention it gets from MLS.
+
+```{python}
+#| output: asis
+print(raw_html(charts.brand_directory() or "<p>No brands yet.</p>"))
+```

@@ -34,6 +34,13 @@ print(f"Front-of-kit partner recorded for **{cover['front_of_kit_brand']} of {n}
 print(raw_html(charts.sponsor_directory() or "<p>The dataset has no clubs yet.</p>"))
 ```
 
+## The market map
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.market_map(), "market-map", "The dataset has no current deals yet.")))
+```
+
 ## Which categories buy MLS's biggest assets?
 
 ```{python}
@@ -57,5 +64,13 @@ brands each kind of seller attracts.
 ```{python}
 #| output: asis
 print(raw_html(charts.card(charts.stadium_by_seller(), "stadium-seller",
+                           "No stadium naming deals recorded yet.")))
+```
+
+## How long have stadium names lasted?
+
+```{python}
+#| output: asis
+print(raw_html(charts.card(charts.stadium_tenure(), "stadium-tenure",
                            "No stadium naming deals recorded yet.")))
 ```

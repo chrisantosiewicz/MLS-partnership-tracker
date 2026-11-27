@@ -1,58 +1,9 @@
-// Site behaviour: chart colors per theme, the club picker, the directory filter.
-// Charts are drawn in Python with the light palette; this swaps every light
-// value for its dark step (same hue, validated for the dark surface) when the
-// page is in dark mode, and back again. Keep the map in sync with charts.py.
+// Site behaviour: the club picker, the directory filter, and smaller chart
+// labels on narrow screens.
 (function () {
   "use strict";
 
-  var LIGHT_TO_DARK = {
-    "#257de0": "#338ced",   // series 1 blue
-    "#f47230": "#e76624",   // series 2 orange
-    "#00b894": "#00a888",   // series 3 aqua
-    "#ec4647": "#eb6263",   // negative red
-    "#191919": "#efefef",   // text
-    "#666666": "#9c9c9c",   // secondary text
-    "#8c8c8c": "#7a7a7a",   // muted lines
-    "#e6e6e3": "#2e2e2e",   // grid
-    "#ffffff": "#191919"    // card surface (gaps, rings, hover label)
-  };
-  var DARK_TO_LIGHT = {};
-  Object.keys(LIGHT_TO_DARK).forEach(function (k) { DARK_TO_LIGHT[LIGHT_TO_DARK[k]] = k; });
-
-  function isDark() { return document.body.classList.contains("quarto-dark"); }
-
-  function remap(value, map) {
-    if (typeof value === "string") {
-      var hit = map[value.toLowerCase()];
-      return hit === undefined ? value : hit;
-    }
-    if (Array.isArray(value)) return value.map(function (v) { return remap(v, map); });
-    if (value && typeof value === "object" && !(value instanceof Date) &&
-        !ArrayBuffer.isView(value)) {
-      var out = {};
-      Object.keys(value).forEach(function (k) {
-        out[k] = k === "customdata" || k === "x" || k === "y" ? value[k] : remap(value[k], map);
-      });
-      return out;
-    }
-    return value;
-  }
-
   function plots() { return document.querySelectorAll(".js-plotly-plot"); }
-
-  function applyTheme() {
-    if (!window.Plotly) return;
-    var dark = isDark();
-    plots().forEach(function (gd) {
-      if (gd.dataset.theme === (dark ? "dark" : "light")) return;
-      if (!gd.dataset.theme && !dark) { gd.dataset.theme = "light"; return; }
-      var map = dark ? LIGHT_TO_DARK : DARK_TO_LIGHT;
-      var data = gd.data.map(function (t) { return remap(t, map); });
-      var layout = remap(gd.layout, map);
-      window.Plotly.react(gd, data, layout, gd._context);
-      gd.dataset.theme = dark ? "dark" : "light";
-    });
-  }
 
   // Club picker: show the three traces whose meta is the chosen club.
   function wireClubSelect() {
@@ -89,7 +40,7 @@
           tr.hidden = !ok;
           if (ok) shown += 1;
         });
-        count.textContent = shown + " of " + rows.length + " clubs";
+        count.textContent = shown + " of " + rows.length + " " + (count.dataset.noun || "clubs");
       }
       input.addEventListener("input", update);
       buttons.forEach(function (b) {
@@ -112,12 +63,28 @@
     });
   }
 
+  // Club profiles: show the chosen club's block.
+  function wireProfiles() {
+    var select = document.getElementById("profile-select");
+    if (!select) return;
+    select.addEventListener("change", function () {
+      document.querySelectorAll(".profile").forEach(function (el) {
+        el.hidden = el.dataset.club !== select.value;
+      });
+      try { history.replaceState(null, "", "#" + select.value); } catch (e) { /* file:// */ }
+    });
+    var wanted = (location.hash || "").slice(1).toUpperCase();
+    if (wanted && select.querySelector("option[value='" + wanted + "']")) {
+      select.value = wanted;
+      select.dispatchEvent(new Event("change"));
+    }
+  }
+
   function init() {
+    wireProfiles();
     compact();
     wireClubSelect();
     wireDirectory();
-    applyTheme();
-    new MutationObserver(applyTheme).observe(document.body, { attributes: true, attributeFilter: ["class"] });
   }
 
   if (document.readyState === "complete") init();

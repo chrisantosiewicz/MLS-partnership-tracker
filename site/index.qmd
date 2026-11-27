@@ -59,6 +59,7 @@ print(raw_html(f"""
   and {int(s.club_match_days):,} club match days.</p>
   <div class="hero-actions">
     <a class="btn-solid" href="sponsors.html">Explore the sponsors</a>
+    <a class="btn-ghost" href="clubs.html">Open a club profile</a>
     <a class="btn-ghost" href="attention.html">See match-day attention</a>
   </div>
   <div class="live">Rebuilt daily · pageviews through {charts.show_date(s.pageviews_through)}</div>

@@ -184,6 +184,10 @@ flowchart LR
 | `mart_attention_by_season` | One row per club per year | Average daily views over a like-for-like calendar window, vs last year |
 | `mart_stadium_naming_by_seller` | One row per seller per category | Stadium naming categories, club-sold vs venue-sold |
 | `mart_sponsor_match_day_attention` | One row per club per sponsor brand | Brand's match-day views vs its own same-weekday norm during the deal |
+| `mart_brand_portfolio` | One row per current sponsor brand | Clubs, assets and 28-day attention for each brand |
+| `mart_club_category_map` | One row per club per category held | Which categories each club sold its tracked assets to |
+| `mart_category_whitespace` | One row per club per open category | Categories 3+ other clubs sell that this club doesn't, with lookalike brands |
+| `mart_stadium_naming_tenure` | One row per current stadium name | First season and seasons held |
 
 Pageviews are a proxy for public attention, never sponsor value.
 

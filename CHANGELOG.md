@@ -5,14 +5,30 @@ Dataset and pipeline changes, newest first. Dataset versions are git tags
 
 ## Unreleased
 
+### Market intelligence (Nov 25, PR after #8)
+- **Brands page**: a searchable directory of all 77 current sponsor brands
+  with owner, category, clubs, assets and Wikipedia attention, plus a
+  multi-club filter (`mart_brand_portfolio`).
+- **Clubs page**: a profile per club with its three partners (each linked to
+  its source), match-day and year-over-year attention ranks, its best sponsor
+  match-day result, and open categories to research with lookalike brands
+  from other clubs (`mart_category_whitespace`). Profiles are linkable by
+  hash, e.g. `clubs.html#SEA`.
+- **Sponsors page**: a club-by-category market map (`mart_club_category_map`)
+  and a stadium-naming tenure chart (`mart_stadium_naming_tenure`).
+- Two new tests: portfolio and market map each count every current deal once;
+  whitespace never names a category the club already holds.
+- Dark mode removed (Chris: not worth the upkeep).
+
 ### Site
 - Redesigned as a four-page site (Overview, Sponsors, Attention, Methods):
   hero and headline-number tiles, finding cards linking to each chart, chart
   cards whose titles state the finding, a "View data" table under every
   chart, a searchable and filterable sponsor directory with a source link on
-  every deal, a club picker on the attention chart, and a dark mode that
-  re-colors charts with validated dark steps. Mobile layout checked at 390px.
-- Charts use a palette checked for color-vision deficiency in light and dark.
+  every deal and a club picker on the attention chart. Mobile layout checked
+  at 390px. (A dark mode shipped in PR #8 and was removed on Nov 25 at Chris's
+  request: not worth the upkeep.)
+- Charts use a palette checked for color-vision deficiency.
 
 ### Analysis
 - Who sells the stadium name: `mart_stadium_naming_by_seller` compares
